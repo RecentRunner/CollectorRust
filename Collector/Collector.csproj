@@ -3,6 +3,7 @@
     <PropertyGroup>
         <OutputType>WinExe</OutputType>
         <TargetFramework>netcoreapp2.2</TargetFramework>
+        <LangVersion>latest</LangVersion>
     </PropertyGroup>
 
     <ItemGroup>
@@ -15,7 +16,8 @@
     </ItemGroup>
 
     <ItemGroup>
-      <Folder Include="LegacyJava" />
+      <Folder Include="OLD" />
+      <Folder Include="src" />
     </ItemGroup>
 
 </Project>
