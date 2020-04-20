@@ -5,7 +5,7 @@ namespace Collector.Dimension
     public class WorldRenderer : IRestrictions {
         //private Mouse mouse;
         //private InputController inputController;
-        private Player _player;
+        //private Player _player;
 
 /*
     public WorldRenderer(InputController inputController, Mouse mouse, Player player) {

@@ -3,15 +3,13 @@ using Collector;
 public class Player : IRestrictions {
     private static int X;
     private static int Y;
-    //private string SpriteName;
-    //private TextureAtlas textureAtlas;
-    //private Animation<TextureAtlas.AtlasRegion> animation;
+    private string SpriteName;
     private Inventory playerInventory;
 
     public Player(int x, int y) {
         //Player location
-        Player.X = x<<IRestrictions.TileShift;
-        Player.Y = y<<IRestrictions.TileShift;
+        X = x<<IRestrictions.TileShift;
+        Y = y<<IRestrictions.TileShift;
 
         //Player Inventory
         playerInventory = new Inventory();
@@ -33,11 +31,11 @@ public class Player : IRestrictions {
     }
 
     public static void addX(int x){
-        Player.X += x;
+        X += x;
     }
 
     public static void addY(int y){
-        Player.Y += y;
+        Y += y;
     }
 
     /*

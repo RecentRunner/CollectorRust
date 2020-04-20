@@ -1,14 +1,18 @@
 using System.Collections.Generic;
+using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Content;
+using Microsoft.Xna.Framework.Graphics;
+
 namespace Collector.Dimension
 {
     public class BlockMaterials {
         public static Dictionary<string,Block> Materials = new Dictionary<string, Block>();
-        //public static Dictionary<String,Texture> Textures = new Dictionary<>();
+        public static Dictionary<string,Texture2D> Textures = new Dictionary<string, Texture2D>();
 
         //Private so the singleton can't be instantiated
-        private BlockMaterials() {}
+        internal BlockMaterials() {}
     
-        public static void create(){
+        public static void LoadContent(ContentManager content){
             Materials.Add("grass",new Block("grass"));
             Materials.Add("wood",new Block("wood"));
             Materials.Add("water",new Block("water"));
@@ -18,11 +22,16 @@ namespace Collector.Dimension
             Materials.Add("air",new Block("air"));
             Materials.Add("roof",new Block("roof"));
             Materials.Add("wall",new Block("wall"));
-            /*
-        for (String s:BlockMaterials.Materials.keySet()) {
-            Textures.Add(s,new Texture("assets/" + s + ".png"));
+
+            foreach (var name in Materials.Keys)
+            {
+                Textures.Add(name,content.Load<Texture2D>(name));
+            }
         }
-        */
+
+        public static void Draw(string name,SpriteBatch _spriteBatch,int x, int y)
+        {
+            _spriteBatch.Draw(Textures[name],new Vector2(x, y),Color.Aqua);
         }
     }
 }
