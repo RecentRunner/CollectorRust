@@ -1,25 +1,33 @@
-package Collector.Character;
+using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Content;
+using Microsoft.Xna.Framework.Graphics;
 
-import Collector.Restrictions;
-import com.badlogic.gdx.graphics.Texture;
-import com.badlogic.gdx.math.Vector3;
+namespace Collector.Character
+{
+    public class Mouse : IRestrictions {
+        private SpriteBatch _spriteBatch;
+        private ContentManager _contentManager;
+        private Texture2D Crosshair { get; set; }
 
-public class Mouse implements Restrictions {
-    Texture crosshair;
+        public Mouse(ContentManager contentManager, SpriteBatch spriteBatch)
+        {
+            _spriteBatch = spriteBatch;
+            _contentManager = contentManager;
+            Crosshair = _contentManager.Load<Texture2D>("crosshair");
+        }
 
-    public Mouse() {
-        this.crosshair = new Texture("assets/crosshair.png");
-    }
+        public void Draw()
+        {
+            _spriteBatch.Draw(Crosshair, new Vector2(Player.X, Player.Y),Color.Aqua);
+        }
 
-    public Texture getCrosshair() {
-        return crosshair;
-    }
+        
+        public int GetSelectedX(Vector3 mousePos) {
+            return ((int)(mousePos.X)>>4)<<4;
+        }
 
-    public int getSelectedX(Vector3 mousePos) {
-        return ((int)(mousePos.x)>>4)<<4;
-    }
-
-    public int getSelectedY(Vector3 mousePos) {
-        return ((int)(mousePos.y)>>4)<<4;
+        public int GetSelectedY(Vector3 mousePos) {
+            return ((int)(mousePos.Y)>>4)<<4;
+        }
     }
 }

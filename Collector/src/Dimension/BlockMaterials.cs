@@ -12,7 +12,7 @@ namespace Collector.Dimension
         //Private so the singleton can't be instantiated
         internal BlockMaterials() {}
     
-        public static void LoadContent(ContentManager content){
+        public static void Initialize(ContentManager content){
             Materials.Add("grass",new Block("grass"));
             Materials.Add("wood",new Block("wood"));
             Materials.Add("water",new Block("water"));
@@ -27,11 +27,11 @@ namespace Collector.Dimension
             {
                 Textures.Add(name,content.Load<Texture2D>(name));
             }
+            
         }
 
         public static void Draw(string name,SpriteBatch _spriteBatch,int x, int y)
         {
-            _spriteBatch.Draw(Textures[name],new Vector2(x, y),Color.Aqua);
         }
     }
 }

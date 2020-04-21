@@ -1,59 +1,91 @@
 using System.Collections.Generic;
 using Collector;
+using Collector.Character;
 using Collector.Dimension;
 using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Content;
+using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
+using MonoGame.Extended;
+using Mouse = Collector.Character.Mouse;
 
 public class InputController : IRestrictions {
 
-    private Player player;
-    private Mouse mouse;
-    //private Dictionary<string, Animation<TextureAtlas.AtlasRegion>> animations;
-    int i = 0;
+    private Player _player;
+    private Mouse _mouse;
+    private OrthographicCamera _cam;
+    private Dictionary<string, Rectangle> animations;
+    public string Input { get; set; }
+    private SpriteBatch _spriteBatch;
+    private ContentManager _content;
 
-    public InputController(Player player, Mouse mouse)
+    public InputController(Player player, Mouse mouse, OrthographicCamera cam, SpriteBatch spriteBatch, ContentManager contentManager)
     {
-        this.player = player;
-        this.mouse = mouse;
+        _player = player;
+        _mouse = mouse;
+        _cam = cam;
+        _spriteBatch = spriteBatch;
+        _content = contentManager;
+        Input = "Down";
+
+        animations = new Dictionary<string, Rectangle>
+        {
+            ["Up"] = new Rectangle(0, 0, 32, 32),
+            ["Right"] = new Rectangle(0, 0, 32, 32),
+            ["Left"] = new Rectangle(0, 0, 32, 32),
+            ["Right"] = new Rectangle(0, 0, 32, 32)
+        };
     }
 
-    public InputController() {
-
-        /*
-        animations = new HashMap<>();
-        animations.put("Up", new Animation<>(1 / 4f, player.getTextureAtlas().findRegions(player.getSpriteName() + "_" + "Up")));
-        animations.put("UpRight", new Animation<>(1 / 4f, player.getTextureAtlas().findRegions(player.getSpriteName() + "_" + "UpRight")));
-        animations.put("UpLeft", new Animation<>(1 / 4f, player.getTextureAtlas().findRegions(player.getSpriteName() + "_" + "UpLeft")));
-        animations.put("Down", new Animation<>(1 / 4f, player.getTextureAtlas().findRegions(player.getSpriteName() + "_" + "Down")));
-        animations.put("DownRight", new Animation<>(1 / 4f, player.getTextureAtlas().findRegions(player.getSpriteName() + "_" + "DownRight")));
-        animations.put("DownLeft", new Animation<>(1 / 4f, player.getTextureAtlas().findRegions(player.getSpriteName() + "_" + "DownLeft")));
-        animations.put("Left", new Animation<>(1 / 4f, player.getTextureAtlas().findRegions(player.getSpriteName() + "_" + "Left")));
-        animations.put("Right", new Animation<>(1 / 4f, player.getTextureAtlas().findRegions(player.getSpriteName() + "_" + "Right")));
-        */
-    }
-    
-    private void PlayerInput()
+    public void PlayerInput(Main main, SpriteBatch spriteBatch)
     {
-        if (Keyboard.GetState().IsKeyDown(Keys.Escape))
+        var keyboardState = Keyboard.GetState();
+        const int movementSpeed = IRestrictions.MovementSpeed;
+        if (keyboardState.IsKeyDown(Keys.Escape))
         {
-            Exit();
+            Quit(main);
         }
-        else if(Keyboard.GetState().IsKeyDown(Keys.W))
+        if (keyboardState.IsKeyDown(Keys.W))
         {
-            
+            Input = "Up";
+            Player.Y += -movementSpeed;
+            _cam.Move(new Vector2(0,-movementSpeed));
         }
-        else if(Keyboard.GetState().IsKeyDown(Keys.A))
+        if (keyboardState.IsKeyDown(Keys.A))
         {
-            
+            Player.X += -movementSpeed;
+            _cam.Move(new Vector2(-movementSpeed,0));
+            Input = "Left";
         }
-        else if(Keyboard.GetState().IsKeyDown(Keys.S))
+        if (keyboardState.IsKeyDown(Keys.S))
         {
-            
+            Player.Y += movementSpeed;
+            _cam.Move(new Vector2(0,movementSpeed));
+            Input = "Down";
         }
-        else if(Keyboard.GetState().IsKeyDown(Keys.D))
+
+        if (keyboardState.IsKeyDown(Keys.D))
         {
-            
+            Player.X += movementSpeed;
+            _cam.Move(new Vector2(movementSpeed, 0));
+            Input = "Right";
         }
+
+        if (keyboardState.IsKeyDown(Keys.Q))
+        {
+            _cam.ZoomIn(0.05f);
+        }
+
+        if (keyboardState.IsKeyDown(Keys.E))
+        {
+            _cam.ZoomOut(0.05f);
+        }
+
+    }
+
+    private static void Quit(Game main)
+    {
+        main.Exit();
     }
     
     /*
@@ -138,5 +170,10 @@ public void handleInput() {
    
     }
      */
-    
+
+    public void Draw()
+    {
+        var texture = _content.Load<Texture2D>("man/man-0");
+        _spriteBatch.Draw(texture,new Vector2(Player.X,Player.Y),Color.White);
+    }
 }

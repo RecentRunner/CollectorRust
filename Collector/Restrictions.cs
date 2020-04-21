@@ -11,7 +11,7 @@ namespace Collector
         public const int MovementSpeed = 16;
         public const int FreeSpeed = 2;
         public const int KeyDelay = 0;
-        public const int TileSize = 16;
+        public const int TileSize = 32;
         public const int ChunkSize = 8;
         public const int SuperChunkSize = 1;
         public const int TileShift = 5;
