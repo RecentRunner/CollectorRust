@@ -38,7 +38,7 @@ namespace Collector
             _cam.LookAt(new Vector2(Player.X,Player.Y));
 
             _spriteBatch = new SpriteBatch(GraphicsDevice);
-            _mouse = new Mouse(Content,_spriteBatch);
+            _mouse = new Mouse(Content,_spriteBatch,_cam);
             _inputController = new InputController(_player,_mouse,_cam,_spriteBatch,Content);
             WorldRenderer = new WorldRenderer(_mouse,_inputController,_player,_spriteBatch,this,_cam);
         }

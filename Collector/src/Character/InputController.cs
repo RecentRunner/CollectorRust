@@ -73,12 +73,12 @@ public class InputController : IRestrictions {
 
         if (keyboardState.IsKeyDown(Keys.Q))
         {
-            _cam.ZoomIn(0.05f);
+            _cam.ZoomIn(0.01f);
         }
 
         if (keyboardState.IsKeyDown(Keys.E))
         {
-            _cam.ZoomOut(0.05f);
+            _cam.ZoomOut(0.01f);
         }
 
     }

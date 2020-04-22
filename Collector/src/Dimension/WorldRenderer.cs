@@ -59,7 +59,7 @@ namespace Collector.Dimension
             DrawWorld(_spriteBatch, 0);
             _inputController.Draw();
             DrawWorld(_spriteBatch, 1);
-            //mouseCrosshair(batch);
+            _mouse.Draw();
             _inputController.PlayerInput(_main,_spriteBatch);
         }
     }

@@ -10,7 +10,7 @@ public interface Restrictions {
     int FREE_SPEED = 2;
     int KEY_DELAY = 0;
 
-    int TILE_SIZE = 16;
+    int TILE_SIZE = 32;
     int CHUNK_SIZE = 8;
     int SUPER_CHUNK_SIZE = 1;
 
