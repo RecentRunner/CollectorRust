@@ -15,8 +15,10 @@ namespace Collector.Dimension
         private SpriteBatch _spriteBatch;
         private Main _main;
         private OrthographicCamera _orthographicCamera;
+        private double _elapsedTime;
 
-        public WorldRenderer(Mouse mouse, InputController inputController, Player player, SpriteBatch spriteBatch, Main main, OrthographicCamera orthographicCamera)
+        public WorldRenderer(Mouse mouse, InputController inputController, Player player, SpriteBatch spriteBatch,
+            Main main, OrthographicCamera orthographicCamera)
         {
             _mouse = mouse;
             _inputController = inputController;
@@ -24,6 +26,7 @@ namespace Collector.Dimension
             _spriteBatch = spriteBatch;
             _main = main;
             _orthographicCamera = orthographicCamera;
+            _elapsedTime = 0;
         }
 
         private static void DrawWorld(SpriteBatch batch, int layer)
@@ -53,14 +56,13 @@ namespace Collector.Dimension
         }
         */
 
-        public void Draw()
+        public void Draw(GameTime gameTime)
         {
             //Higher means draws in a lower layer
             DrawWorld(_spriteBatch, 0);
             _inputController.Draw();
+            _inputController.PlayerInput(_main,_mouse,gameTime);
             DrawWorld(_spriteBatch, 1);
-            _mouse.Draw();
-            _inputController.PlayerInput(_main,_spriteBatch);
         }
     }
 }

@@ -1,4 +1,6 @@
-﻿using Collector.Character;
+﻿using System;
+using System.IO;
+using Collector.Character;
 using Collector.Dimension;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
@@ -20,34 +22,35 @@ namespace Collector
         private WorldRenderer WorldRenderer { get; set; }
 
         public Main()
-        { 
+        {
             _graphics = new GraphicsDeviceManager(this);
             Content.RootDirectory = "Content";
             IsMouseVisible = true;
         }
 
         protected override void Initialize()
-        {// TODO: Add your initialization logic here
+        {
+            // TODO: Add your initialization logic here
             base.Initialize();
 
             BlockMaterials.Initialize(Content);
 
             var viewportAdapter = new BoxingViewportAdapter(Window, GraphicsDevice, 800, 480);
-            _player = new Player(0,0);
+            _player = new Player(0, 0);
             _cam = new OrthographicCamera(viewportAdapter);
-            _cam.LookAt(new Vector2(Player.X,Player.Y));
+            _cam.LookAt(new Vector2(Player.X, Player.Y));
 
             _spriteBatch = new SpriteBatch(GraphicsDevice);
-            _mouse = new Mouse(Content,_spriteBatch,_cam);
-            _inputController = new InputController(_player,_mouse,_cam,_spriteBatch,Content);
-            WorldRenderer = new WorldRenderer(_mouse,_inputController,_player,_spriteBatch,this,_cam);
+            _mouse = new Mouse(Content, _spriteBatch, _cam);
+            _inputController = new InputController(_player, _mouse, _cam, _spriteBatch, Content);
+            WorldRenderer = new WorldRenderer(_mouse, _inputController, _player, _spriteBatch, this, _cam);
         }
 
         protected override void Update(GameTime gameTime)
-        {// TODO: Add your update logic here/*
+        {
+            // TODO: Add your update logic here/*
             base.Update(gameTime);
-            _inputController.PlayerInput(this,_spriteBatch);
-
+            
             World.LoadChunks();
             World.UnloadChunks();
         }
@@ -59,7 +62,7 @@ namespace Collector
             GraphicsDevice.Clear(Color.CornflowerBlue);
             _spriteBatch.Begin(transformMatrix: transformMatrix);
             _mouse.Draw();
-            WorldRenderer.Draw();
+            WorldRenderer.Draw(gameTime);
             _spriteBatch.End();
         }
     }

@@ -5,12 +5,12 @@ using Microsoft.Xna.Framework.Graphics;
 
 namespace Collector.Dimension
 {
-    public class BlockMaterials {
-        public static Dictionary<string,Block> Materials = new Dictionary<string, Block>();
-        public static Dictionary<string,Texture2D> Textures = new Dictionary<string, Texture2D>();
+    public static class BlockMaterials {
+        public static readonly Dictionary<string,Block> Materials = new Dictionary<string, Block>();
+        public static readonly Dictionary<string,Texture2D> Textures = new Dictionary<string, Texture2D>();
 
         //Private so the singleton can't be instantiated
-        internal BlockMaterials() {}
+        static BlockMaterials() {}
     
         public static void Initialize(ContentManager content){
             Materials.Add("grass",new Block("grass"));
@@ -27,11 +27,6 @@ namespace Collector.Dimension
             {
                 Textures.Add(name,content.Load<Texture2D>(name));
             }
-            
-        }
-
-        public static void Draw(string name,SpriteBatch _spriteBatch,int x, int y)
-        {
         }
     }
 }
