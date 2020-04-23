@@ -7,12 +7,11 @@ using Collector.ThirdPartyCode;
 namespace Collector.Dimension
 {
     public class Chunks: IRestrictions {
-        public static Dictionary<Tuple<int, int, int>, Block> LoadedChunks { get; } =
-            new Dictionary<Tuple<int, int, int>, Block>();
-
+        public static Dictionary<Tuple<int, int, int>, Block> LoadedChunks { get; } = new Dictionary<Tuple<int, int, int>, Block>();
         private static readonly Dictionary<Tuple<int, int, int>, Block> SavedChunks = new Dictionary<Tuple<int, int, int>, Block>();
-        private static readonly OpenSimplexNoise _gen1 = new OpenSimplexNoise(IRestrictions.Seed+ 1);
-        private static readonly OpenSimplexNoise _gen2 = new OpenSimplexNoise(IRestrictions.Seed);
+        
+        private static readonly OpenSimplexNoise Gen1 = new OpenSimplexNoise(IRestrictions.Seed+ 1);
+        private static readonly OpenSimplexNoise Gen2 = new OpenSimplexNoise(IRestrictions.Seed);
 
         public static void CreateStructures() {
             const int i = 10;
@@ -21,22 +20,30 @@ namespace Collector.Dimension
             SetBlock(3 + i, 3,1, "roof");
             SetBlock(4 + i, 3,1,"roof");
         }
-        
-        public static void SetBlock(int x, int y,int z, string name) {
-            LoadedChunks.Add(new Tuple<int,int,int>(x, y, z), BlockMaterials.Materials[name]);
-            SavedChunks.Add(new Tuple<int,int,int>(x, y, z), BlockMaterials.Materials[name]);
+
+        private static void SetBlock(int x, int y, int z, string name) {
+            LoadedChunks[new Tuple<int,int,int>(x, y, z)] = BlockMaterials.Materials[name];
+            SavedChunks[new Tuple<int,int,int>(x, y, z)] = BlockMaterials.Materials[name];
         }
 
-        public static void PlaceBlock(int x, int y, string name){
+        public static void PlaceBlock(int x, int y, string name)
+        {
             var triple = new Tuple<int, int, int>(x, y, 1);
-            if (!LoadedChunks[triple].Name.Equals("air")) return;
-            LoadedChunks[triple] = BlockMaterials.Materials[name];
-            SavedChunks[triple] =  BlockMaterials.Materials[name];
+            if (LoadedChunks.ContainsKey(triple))
+            {
+                if (LoadedChunks[triple].Name.Equals("air"))
+                {
+                    SetBlock(x, y, 1, name);
+                }
+            }
         }
 
         public static void RemoveBlock(int x, int y){
             var triple = new Tuple<int, int, int>(x, y, 1);
+            
+            if (!LoadedChunks.ContainsKey(triple)) return;
             if (LoadedChunks[triple].Name.Equals("air")) return;
+            
             LoadedChunks[triple] = BlockMaterials.Materials["air"];
             SavedChunks[triple] = BlockMaterials.Materials["air"];
         }
@@ -97,11 +104,11 @@ namespace Collector.Dimension
         }
 
         private static double Noise1(double nx, double ny) {
-            return _gen1.Evaluate(nx, ny) / 2 + 0.5;
+            return Gen1.Evaluate(nx, ny) / 2 + 0.5;
         }
 
         private static double Noise2(double nx, double ny) {
-            return _gen2.Evaluate(nx, ny) / 2 + 0.5;
+            return Gen2.Evaluate(nx, ny) / 2 + 0.5;
         }
 
         private static Block GetTerrain(int x, int y) {

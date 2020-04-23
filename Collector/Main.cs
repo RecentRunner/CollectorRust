@@ -7,7 +7,6 @@ using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 using MonoGame.Extended;
 using MonoGame.Extended.ViewportAdapters;
-using Mouse = Collector.Character.Mouse;
 
 namespace Collector
 {
@@ -17,7 +16,7 @@ namespace Collector
         private SpriteBatch _spriteBatch;
         private InputController _inputController;
         private Player _player;
-        private Mouse _mouse;
+        private PlayerMouse _playerMouse;
         private OrthographicCamera _cam;
         private WorldRenderer WorldRenderer { get; set; }
 
@@ -41,9 +40,9 @@ namespace Collector
             _cam.LookAt(new Vector2(Player.X, Player.Y));
 
             _spriteBatch = new SpriteBatch(GraphicsDevice);
-            _mouse = new Mouse(Content, _spriteBatch, _cam);
-            _inputController = new InputController(_mouse, _cam, _spriteBatch, Content);
-            WorldRenderer = new WorldRenderer(_mouse, _inputController, _player, _spriteBatch, this, _cam);
+            _playerMouse = new PlayerMouse(Content, _spriteBatch, _cam);
+            _inputController = new InputController(_playerMouse, _cam, _spriteBatch, Content);
+            WorldRenderer = new WorldRenderer(_playerMouse, _inputController, _spriteBatch, this);
         }
 
         protected override void Update(GameTime gameTime)
@@ -61,7 +60,7 @@ namespace Collector
             base.Draw(gameTime);
             GraphicsDevice.Clear(Color.CornflowerBlue);
             _spriteBatch.Begin(transformMatrix: transformMatrix);
-            _mouse.Draw();
+            _playerMouse.Draw();
             WorldRenderer.Draw(gameTime);
             _spriteBatch.End();
         }

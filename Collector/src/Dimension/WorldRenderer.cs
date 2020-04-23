@@ -3,30 +3,22 @@ using Collector.Character;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
-using MonoGame.Extended;
 
 namespace Collector.Dimension
 {
     public class WorldRenderer : IRestrictions
     {
-        private Mouse _mouse;
-        private InputController _inputController;
-        private Player _player;
-        private SpriteBatch _spriteBatch;
-        private Main _main;
-        private OrthographicCamera _orthographicCamera;
-        private double _elapsedTime;
+        private readonly PlayerMouse _playerMouse;
+        private readonly InputController _inputController;
+        private readonly SpriteBatch _spriteBatch;
+        private readonly Main _main;
 
-        public WorldRenderer(Mouse mouse, InputController inputController, Player player, SpriteBatch spriteBatch,
-            Main main, OrthographicCamera orthographicCamera)
+        public WorldRenderer(PlayerMouse playerMouse, InputController inputController, SpriteBatch spriteBatch, Main main)
         {
-            _mouse = mouse;
+            _playerMouse = playerMouse;
             _inputController = inputController;
-            _player = player;
             _spriteBatch = spriteBatch;
             _main = main;
-            _orthographicCamera = orthographicCamera;
-            _elapsedTime = 0;
         }
 
         private static void DrawWorld(SpriteBatch batch, int layer)
@@ -45,23 +37,12 @@ namespace Collector.Dimension
             }
         }
 
-        /*
-        private void mouseCrosshair(SpriteBatch batch)
-        {
-            Vector3 mousePos = new Vector3(Gdx.input.getX(), Gdx.input.getY(), 0);
-            Main.cam.unproject(mousePos);
-            int x = mouse.getSelectedX(mousePos);
-            int y = mouse.getSelectedY(mousePos);
-            batch.draw(mouse.getCrosshair(), x, y);
-        }
-        */
-
         public void Draw(GameTime gameTime)
         {
             //Higher means draws in a lower layer
             DrawWorld(_spriteBatch, 0);
             _inputController.Draw();
-            _inputController.PlayerInput(_main,_mouse,gameTime);
+            _inputController.PlayerInput(_main,_playerMouse,gameTime);
             DrawWorld(_spriteBatch, 1);
         }
     }

@@ -1,16 +1,17 @@
+using System;
 using System.Collections.Generic;
 using Collector;
 using Collector.Character;
+using Collector.Dimension;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 using MonoGame.Extended;
-using Mouse = Collector.Character.Mouse;
 
 public class InputController : IRestrictions
 {
-    private readonly Mouse _mouse;
+    private readonly PlayerMouse _playerMouse;
     private readonly OrthographicCamera _cam;
     private readonly Dictionary<string, Rectangle[]> _animations;
     private readonly Texture2D _texture;
@@ -20,10 +21,10 @@ public class InputController : IRestrictions
     private int _timeSinceLastFrame;
 
 
-    public InputController(Mouse mouse, OrthographicCamera cam, SpriteBatch spriteBatch, ContentManager contentManager)
+    public InputController(PlayerMouse playerMouse, OrthographicCamera cam, SpriteBatch spriteBatch, ContentManager contentManager)
     {
         Input = "Down";
-        _mouse = mouse;
+        _playerMouse = playerMouse;
         _cam = cam;
         _spriteBatch = spriteBatch;
         _frameNumber = 0;
@@ -32,78 +33,78 @@ public class InputController : IRestrictions
         {
             ["Up"] = new[]
             {
-                new Rectangle(32*0, 0, 32, 32),
-                new Rectangle(32*1, 0, 32, 32),
-                new Rectangle(32*2, 0, 32, 32),
-                new Rectangle(32*3, 0, 32, 32)
+                new Rectangle(32 * 0, 0, 32, 32),
+                new Rectangle(32 * 1, 0, 32, 32),
+                new Rectangle(32 * 2, 0, 32, 32),
+                new Rectangle(32 * 3, 0, 32, 32)
             },
             ["Right"] = new[]
             {
-                new Rectangle(32*0 + 32*4, 32, 32, 32),
-                new Rectangle(32*1 + 32*4, 32, 32, 32),
-                new Rectangle(32*2 + 32*4, 32, 32, 32),
-                new Rectangle(32*3 + 32*4, 32, 32, 32)
+                new Rectangle(32 * 0 + 32 * 4, 32, 32, 32),
+                new Rectangle(32 * 1 + 32 * 4, 32, 32, 32),
+                new Rectangle(32 * 2 + 32 * 4, 32, 32, 32),
+                new Rectangle(32 * 3 + 32 * 4, 32, 32, 32)
             },
             ["UpRight"] = new[]
             {
-                new Rectangle(32*0 + 32*4, 32*2, 32, 32),
-                new Rectangle(32*1 + 32*4, 32*2, 32, 32),
-                new Rectangle(32*2 + 32*4, 32*2, 32, 32),
-                new Rectangle(32*3 + 32*4, 32*2, 32, 32)
+                new Rectangle(32 * 0 + 32 * 4, 32 * 2, 32, 32),
+                new Rectangle(32 * 1 + 32 * 4, 32 * 2, 32, 32),
+                new Rectangle(32 * 2 + 32 * 4, 32 * 2, 32, 32),
+                new Rectangle(32 * 3 + 32 * 4, 32 * 2, 32, 32)
             },
             ["DownRight"] = new[]
             {
-                new Rectangle(32*0 + 32*4, 32*3, 32, 32),
-                new Rectangle(32*1 + 32*4, 32*3, 32, 32),
-                new Rectangle(32*2 + 32*4, 32*3, 32, 32),
-                new Rectangle(32*3 + 32*4, 32*3, 32, 32)
+                new Rectangle(32 * 0 + 32 * 4, 32 * 3, 32, 32),
+                new Rectangle(32 * 1 + 32 * 4, 32 * 3, 32, 32),
+                new Rectangle(32 * 2 + 32 * 4, 32 * 3, 32, 32),
+                new Rectangle(32 * 3 + 32 * 4, 32 * 3, 32, 32)
             },
             ["Left"] = new[]
             {
-                new Rectangle(32*0, 32, 32, 32),
-                new Rectangle(32*1, 32, 32, 32),
-                new Rectangle(32*2, 32, 32, 32),
-                new Rectangle(32*3, 32, 32, 32)
+                new Rectangle(32 * 0, 32, 32, 32),
+                new Rectangle(32 * 1, 32, 32, 32),
+                new Rectangle(32 * 2, 32, 32, 32),
+                new Rectangle(32 * 3, 32, 32, 32)
             },
             ["UpLeft"] = new[]
             {
-                new Rectangle(32*0, 32*2, 32, 32),
-                new Rectangle(32*1, 32*2, 32, 32),
-                new Rectangle(32*2, 32*2, 32, 32),
-                new Rectangle(32*3, 32*2, 32, 32)
+                new Rectangle(32 * 0, 32 * 2, 32, 32),
+                new Rectangle(32 * 1, 32 * 2, 32, 32),
+                new Rectangle(32 * 2, 32 * 2, 32, 32),
+                new Rectangle(32 * 3, 32 * 2, 32, 32)
             },
             ["DownLeft"] = new[]
             {
-                new Rectangle(32*0, 32, 32, 32),
-                new Rectangle(32*1, 32, 32, 32),
-                new Rectangle(32*2, 32, 32, 32),
-                new Rectangle(32*3, 32, 32, 32)
+                new Rectangle(32 * 0, 32, 32, 32),
+                new Rectangle(32 * 1, 32, 32, 32),
+                new Rectangle(32 * 2, 32, 32, 32),
+                new Rectangle(32 * 3, 32, 32, 32)
             },
             ["Down"] = new[]
             {
-                new Rectangle(32*0 + 32*4, 0, 32, 32),
-                new Rectangle(32*1 + 32*4, 0, 32, 32),
-                new Rectangle(32*2 + 32*4, 0, 32, 32),
-                new Rectangle(32*3 + 32*4, 0, 32, 32)
+                new Rectangle(32 * 0 + 32 * 4, 0, 32, 32),
+                new Rectangle(32 * 1 + 32 * 4, 0, 32, 32),
+                new Rectangle(32 * 2 + 32 * 4, 0, 32, 32),
+                new Rectangle(32 * 3 + 32 * 4, 0, 32, 32)
             },
         };
     }
 
-    public void PlayerInput(Main main, Mouse mouse, GameTime gameTime)
+    public void PlayerInput(Main main, PlayerMouse playerMouse, GameTime gameTime)
     {
         var keyboardState = Keyboard.GetState();
+        var mouseState = Mouse.GetState();
         const int movementSpeed = IRestrictions.MovementSpeed;
         if (keyboardState.IsKeyDown(Keys.Escape))
         {
             Quit(main);
         }
-
         if (keyboardState.IsKeyUp(Keys.W) && keyboardState.IsKeyUp(Keys.A) && keyboardState.IsKeyUp(Keys.S) && keyboardState.IsKeyUp(Keys.D))
         {
             Input = Input.Contains("Right") ? "DownRight" : "DownLeft";
 
             _frameNumber = 0;
-            _mouse.Draw();
+            _playerMouse.Draw();
         }
         if (keyboardState.IsKeyDown(Keys.W) && keyboardState.IsKeyDown(Keys.D))
         {
@@ -173,7 +174,15 @@ public class InputController : IRestrictions
         {
             _cam.ZoomOut(0.01f);
         }
-        
+
+        if (mouseState.LeftButton == ButtonState.Pressed)
+        {
+            Chunks.RemoveBlock(playerMouse.GetSelectedXTile(),playerMouse.GetSelectedYTile());
+        }
+        if (mouseState.RightButton == ButtonState.Pressed)
+        {
+            Chunks.PlaceBlock(playerMouse.GetSelectedXTile(),playerMouse.GetSelectedYTile(),"wood");
+        }
     }
 
     private void UpdateAnimationFrame(GameTime gameTime)
