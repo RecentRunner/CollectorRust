@@ -10,8 +10,8 @@ namespace QuadTree
 
     public class QuadTree<T>
     {
-        private static Stack<Branch> branchPool = new Stack<Branch>();
-        private static Stack<Leaf> leafPool = new Stack<Leaf>();
+        private static Stack<Branch> _branchPool = new Stack<Branch>();
+        private static Stack<Leaf> _leafPool = new Stack<Leaf>();
 
         private readonly Branch _root;
         private readonly int _splitCount;
@@ -49,8 +49,8 @@ namespace QuadTree
 
         public static void ClearPools()
         {
-            branchPool = new Stack<Branch>();
-            leafPool = new Stack<Leaf>();
+            _branchPool = new Stack<Branch>();
+            _leafPool = new Stack<Leaf>();
         }
 
 
@@ -160,7 +160,7 @@ namespace QuadTree
 
         private static Branch CreateBranch(QuadTree<T> tree, Branch parent, int branchDepth, ref Quad quad)
         {
-            var branch = branchPool.Count > 0 ? branchPool.Pop() : new Branch();
+            var branch = _branchPool.Count > 0 ? _branchPool.Pop() : new Branch();
             branch.Tree = tree;
             branch.Parent = parent;
             branch.Split = false;
@@ -176,7 +176,7 @@ namespace QuadTree
 
         private static Leaf CreateLeaf(T value, ref Quad quad)
         {
-            var leaf = leafPool.Count > 0 ? leafPool.Pop() : new Leaf();
+            var leaf = _leafPool.Count > 0 ? _leafPool.Pop() : new Leaf();
             leaf.Value = value;
             leaf.Quad = quad;
             return leaf;
@@ -201,14 +201,14 @@ namespace QuadTree
                 for (var i = 0; i < 4; ++i)
                 {
                     if (Branches[i] == null) continue;
-                    branchPool.Push(Branches[i]);
+                    _branchPool.Push(Branches[i]);
                     Branches[i].Clear();
                     Branches[i] = null;
                 }
 
                 foreach (var t in Leaves)
                 {
-                    leafPool.Push(t);
+                    _leafPool.Push(t);
                     t.Branch = null;
                     t.Value = default;
                 }
