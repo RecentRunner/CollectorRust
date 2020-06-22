@@ -181,7 +181,7 @@ public class InputController : IRestrictions
         }
         if (mouseState.RightButton == ButtonState.Pressed)
         {
-            Chunks.PlaceBlock(playerMouse.GetSelectedXTile(),playerMouse.GetSelectedYTile(),"wood");
+            Chunks.PlaceBlock(playerMouse.GetSelectedXTile(),playerMouse.GetSelectedYTile(),Blocks.BlockWood);
         }
     }
 

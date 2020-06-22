@@ -8,7 +8,7 @@ namespace Collector
         public const int Seed = 1;
         public const float ViewportHeight = 9/2f;
         public const float ViewportWidth = 16/2f; 
-        public const int MovementSpeed = 16;
+        public const int MovementSpeed = 1;
         public const int FreeSpeed = 2;
         public const int KeyDelay = 0;
         public const int TileSize = 32;

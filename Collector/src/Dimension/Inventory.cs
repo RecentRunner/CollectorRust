@@ -11,11 +11,7 @@ public class Inventory {
     public void SetInventory(LinkedList<ItemStack> inventory) {
         this.inventory = inventory;
     }
-
-    public void AddItem(Block block){
-        inventory.AddFirst((ItemStack) block);
-    }
-
+    
     public void RemoveItem(ItemStack itemStack){
         inventory.Remove(itemStack);
     }

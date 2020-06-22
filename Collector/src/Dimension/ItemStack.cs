@@ -1,11 +1,11 @@
 
 namespace Collector.Dimension
 {
-    public class ItemStack: Block {
+    public class ItemStack {
         int value;
         int quantity;
 
-        public ItemStack(string name, int value, int quantity) : base(name)
+        public ItemStack(Blocks id, int value, int quantity)
         {
             this.value = value;
             this.quantity = quantity;

@@ -1,7 +1,6 @@
 using System.Linq;
 using Collector.Character;
 using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
 
 namespace Collector.Dimension
@@ -23,10 +22,10 @@ namespace Collector.Dimension
 
         private static void DrawWorld(SpriteBatch batch, int layer)
         {
-            foreach (var chunkpair in Chunks.LoadedChunks.Keys.Where(chunkpair => chunkpair.Item3 == layer))
+            foreach (var chunkpair in Chunks.LoadedChunks.Keys.Where(chunkpair => layer==chunkpair.Item3))
             {
                 batch.Draw(
-                    BlockMaterials.Textures[Chunks.LoadedChunks[chunkpair].Name],
+                    Main.Materials[Chunks.LoadedChunks[chunkpair]],
                     new Rectangle(
                         chunkpair.Item1 << IRestrictions.TileShift,
                         chunkpair.Item2 << IRestrictions.TileShift,
@@ -40,10 +39,11 @@ namespace Collector.Dimension
         public void Draw(GameTime gameTime)
         {
             //Higher means draws in a lower layer
-            DrawWorld(_spriteBatch, 0);
+            DrawWorld(_spriteBatch,0);
+            DrawWorld(_spriteBatch,1);
             _inputController.Draw();
             _inputController.PlayerInput(_main,_playerMouse,gameTime);
-            DrawWorld(_spriteBatch, 1);
+            DrawWorld(_spriteBatch,2);
         }
     }
 }

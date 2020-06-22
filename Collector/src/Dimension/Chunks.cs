@@ -3,38 +3,39 @@
 using System;
 using System.Collections.Generic;
 using Collector.ThirdPartyCode;
+using Microsoft.Xna.Framework.Graphics;
 
 namespace Collector.Dimension
 {
-    public class Chunks: IRestrictions {
-        public static Dictionary<Tuple<int, int, int>, Block> LoadedChunks { get; } = new Dictionary<Tuple<int, int, int>, Block>();
-        private static readonly Dictionary<Tuple<int, int, int>, Block> SavedChunks = new Dictionary<Tuple<int, int, int>, Block>();
+    public static class Chunks
+    {
+        public static Dictionary<Tuple<int, int, int>, Blocks> LoadedChunks { get; } = new Dictionary<Tuple<int, int, int>, Blocks>();
+        private static readonly Dictionary<Tuple<int, int, int>, Blocks> SavedChunks = new Dictionary<Tuple<int, int, int>, Blocks>();
         
         private static readonly OpenSimplexNoise Gen1 = new OpenSimplexNoise(IRestrictions.Seed+ 1);
         private static readonly OpenSimplexNoise Gen2 = new OpenSimplexNoise(IRestrictions.Seed);
 
         public static void CreateStructures() {
             const int i = 10;
-            SetBlock(3 + i, 2,1,"wall");
-            SetBlock(4 + i, 2,1,"wall");
-            SetBlock(3 + i, 3,1, "roof");
-            SetBlock(4 + i, 3,1,"roof");
+            SetBlock(3 + i, 2,1,Blocks.BlockWall);
+            SetBlock(4 + i, 2,1,Blocks.BlockWall);
+            SetBlock(3 + i, 3,1, Blocks.BlockRoof);
+            SetBlock(4 + i, 3,1,Blocks.BlockRoof);
         }
 
-        private static void SetBlock(int x, int y, int z, string name) {
-            LoadedChunks[new Tuple<int,int,int>(x, y, z)] = BlockMaterials.Materials[name];
-            SavedChunks[new Tuple<int,int,int>(x, y, z)] = BlockMaterials.Materials[name];
+        private static void SetBlock(int x, int y, int z, Blocks name)
+        {
+            LoadedChunks[new Tuple<int, int, int>(x, y, z)] = name;
+            SavedChunks[new Tuple<int,int,int>(x, y, z)] = name;
         }
 
-        public static void PlaceBlock(int x, int y, string name)
+        public static void PlaceBlock(int x, int y, Blocks name)
         {
             var triple = new Tuple<int, int, int>(x, y, 1);
-            if (LoadedChunks.ContainsKey(triple))
+            if (!LoadedChunks.ContainsKey(triple)) return;
+            if (LoadedChunks[triple].Equals(Blocks.BlockAir))
             {
-                if (LoadedChunks[triple].Name.Equals("air"))
-                {
-                    SetBlock(x, y, 1, name);
-                }
+                SetBlock(x, y, 1, name);
             }
         }
 
@@ -42,10 +43,10 @@ namespace Collector.Dimension
             var triple = new Tuple<int, int, int>(x, y, 1);
             
             if (!LoadedChunks.ContainsKey(triple)) return;
-            if (LoadedChunks[triple].Name.Equals("air")) return;
+            if (LoadedChunks[triple].Equals(Blocks.BlockAir)) return;
             
-            LoadedChunks[triple] = BlockMaterials.Materials["air"];
-            SavedChunks[triple] = BlockMaterials.Materials["air"];
+            LoadedChunks[triple] = Blocks.BlockAir;
+            SavedChunks[triple] = Blocks.BlockAir;
         }
 
         public static void UngenerateChunk(int x, int y) {
@@ -99,8 +100,8 @@ namespace Collector.Dimension
             }
         }
 
-        private static Block GetBlocks(int x, int y, int z) {
-            return SavedChunks.GetValueOrDefault(new Tuple<int, int, int>(x, y, z), new Block("air"));
+        private static Blocks GetBlocks(int x, int y, int z) {
+            return SavedChunks.GetValueOrDefault(new Tuple<int, int, int>(x, y, z), Blocks.BlockAir);
         }
 
         private static double Noise1(double nx, double ny) {
@@ -111,7 +112,7 @@ namespace Collector.Dimension
             return Gen2.Evaluate(nx, ny) / 2 + 0.5;
         }
 
-        private static Block GetTerrain(int x, int y) {
+        private static Blocks GetTerrain(int x, int y) {
             const double scale = 0.01;
             var nx = x * scale;
             var ny = y * scale;
@@ -134,26 +135,26 @@ namespace Collector.Dimension
             return GetBiomeBlock(moisture, elevation);
         }
 
-        private static Block GetBiomeBlock(double moisture, double elevation) {
+        private static Blocks GetBiomeBlock(double moisture, double elevation) {
             var biome = GetBiome(moisture, elevation);
-            if (biome.Equals("Tundra")) return BlockMaterials.Materials["snow"];
-            if (biome.Equals("Taiga")) return BlockMaterials.Materials["snow"];
-            if (biome.Equals("Snow")) return BlockMaterials.Materials["snow"];
+            if (biome.Equals("Tundra")) return Blocks.BlockSnow;
+            if (biome.Equals("Taiga")) return Blocks.BlockSnow;
+            if (biome.Equals("Snow")) return Blocks.BlockSnow;
 
-            if (biome.Equals("Grassland")) return BlockMaterials.Materials["grass"];
-            if (biome.Equals("Shrubland")) return BlockMaterials.Materials["grass"];
-            if (biome.Equals("TemperateDeciduousForest")) return BlockMaterials.Materials["grass"];
+            if (biome.Equals("Grassland")) return Blocks.BlockGrass;
+            if (biome.Equals("Shrubland")) return Blocks.BlockGrass;
+            if (biome.Equals("TemperateDeciduousForest")) return Blocks.BlockGrass;
 
-            if (biome.Equals("TemperateRainForest")) return BlockMaterials.Materials["grass"];
-            if (biome.Equals("TropicalSeasonalForest")) return BlockMaterials.Materials["grass"];
-            if (biome.Equals("TropicalForest")) return BlockMaterials.Materials["grass"];
-            if (biome.Equals("TropicalRainForest")) return BlockMaterials.Materials["grass"];
+            if (biome.Equals("TemperateRainForest")) return Blocks.BlockGrass;
+            if (biome.Equals("TropicalSeasonalForest")) return Blocks.BlockGrass;
+            if (biome.Equals("TropicalForest")) return Blocks.BlockGrass;
+            if (biome.Equals("TropicalRainForest")) return Blocks.BlockGrass;
 
-            if (biome.Equals("Beach")) return BlockMaterials.Materials["sand"];
-            if (biome.Equals("Bare")) return BlockMaterials.Materials["sand"];
-            if (biome.Equals("Scorched")) return BlockMaterials.Materials["sand"];
-            if (biome.Equals("TemperateDesert")) return BlockMaterials.Materials["sand"];
-            return biome.Equals("SubtropicalDesert") ? BlockMaterials.Materials["sand"] : BlockMaterials.Materials["water"];
+            if (biome.Equals("Beach")) return Blocks.BlockSand;
+            if (biome.Equals("Bare")) return Blocks.BlockSand;
+            if (biome.Equals("Scorched")) return Blocks.BlockSand;
+            if (biome.Equals("TemperateDesert")) return Blocks.BlockSand;
+            return biome.Equals("SubtropicalDesert") ? Blocks.BlockSand : Blocks.BlockWater;
         }
 
         private static string GetBiome(double moisture, double elevation) {
