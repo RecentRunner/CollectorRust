@@ -18,7 +18,9 @@ namespace Collector
         private InputController _inputController;
         private Player _player;
         private PlayerMouse _playerMouse;
-        private OrthographicCamera _cam;
+        private static OrthographicCamera _cam;
+        public static int VirtualWidth;
+        public static int VirtualHeight;
         private WorldRenderer WorldRenderer { get; set; }
         public static Dictionary<Blocks, Texture2D> Materials { get; } = new Dictionary<Blocks, Texture2D>();
 
@@ -40,12 +42,16 @@ namespace Collector
             {
                 Materials.Add(name,Content.Load<Texture2D>(name.ToString()));
             }
+
+            VirtualWidth = GraphicsAdapter.DefaultAdapter.CurrentDisplayMode.Width;
+            VirtualHeight = GraphicsAdapter.DefaultAdapter.CurrentDisplayMode.Height;
             
-            var viewportAdapter = new BoxingViewportAdapter(Window, GraphicsDevice, 800, 480);
+            var viewportAdapter = new BoxingViewportAdapter(Window, GraphicsDevice, VirtualWidth, VirtualHeight);
             _player = new Player(0, 0);
             _cam = new OrthographicCamera(viewportAdapter);
-            _cam.LookAt(new Vector2(Player.X, Player.Y));
-
+            _cam.LookAt(new Vector2(Player.X+IRestrictions.TileSize/2, Player.Y+IRestrictions.TileSize/2));
+            _cam.Zoom = IRestrictions.Zoom;
+            
             _spriteBatch = new SpriteBatch(GraphicsDevice);
             _playerMouse = new PlayerMouse(Content, _spriteBatch, _cam);
             _inputController = new InputController(_playerMouse, _cam, _spriteBatch, Content);

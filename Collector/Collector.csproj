@@ -8,18 +8,32 @@
 
     <ItemGroup>
         <MonoGameContentReference Include="**\*.mgcb" />
+        <MonoGameContentReference Remove="OLD\**" />
     </ItemGroup>
 
     <ItemGroup>
+        <PackageReference Include="Humper" Version="0.5.8" />
         <PackageReference Include="MGCB.Linux" Version="3.5.1" />
         <PackageReference Include="MonoGame.Content.Builder" Version="3.7.0.9" />
         <PackageReference Include="MonoGame.Extended" Version="3.7.0" />
+        <PackageReference Include="MonoGame.Extended.Collisions" Version="3.7.0" />
         <PackageReference Include="MonoGame.Framework.DesktopGL.Core" Version="3.8.0.13" />
     </ItemGroup>
 
     <ItemGroup>
-      <Folder Include="OLD" />
       <Folder Include="src" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <Compile Remove="OLD\**" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <EmbeddedResource Remove="OLD\**" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <None Remove="OLD\**" />
     </ItemGroup>
 
 </Project>

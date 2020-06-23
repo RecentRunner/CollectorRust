@@ -1,3 +1,4 @@
+using System;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
@@ -9,7 +10,7 @@ namespace Collector.Character
     public class PlayerMouse : IRestrictions
     {
         private readonly SpriteBatch _spriteBatch;
-        private readonly OrthographicCamera _cam;
+        private static OrthographicCamera _cam;
         private Texture2D Crosshair { get; set; }
 
         public PlayerMouse(ContentManager contentManager, SpriteBatch spriteBatch, OrthographicCamera cam)
@@ -18,30 +19,24 @@ namespace Collector.Character
             _cam = cam;
             Crosshair = contentManager.Load<Texture2D>("crosshair");
         }
-
         public void Draw()
         {
-            _spriteBatch.Draw(Crosshair,new Vector2(GetSelectedX(),GetSelectedY()), Color.White);
-        }
-        
-        public int GetSelectedX()
-        {
-            return ((int) (Mouse.GetState().X + _cam.Position.X) >> 5) << 5;
-        }
-
-        public int GetSelectedY()
-        {
-            return ((int) (Mouse.GetState().Y + _cam.Position.Y) >> 5) << 5;
-        }
-        
-        public int GetSelectedXTile()
-        {
-            return (int) (Mouse.GetState().X + _cam.Position.X) >> 5;
+            _spriteBatch.Draw(
+                Crosshair,
+                new Rectangle(GetSelectedX(),GetSelectedY(),1,1), 
+                new Rectangle(0,0,32,32),
+                Color.White
+                );
         }
 
-        public int GetSelectedYTile()
+        public static int GetSelectedX()
         {
-            return (int) (Mouse.GetState().Y + _cam.Position.Y) >> 5;
+            return (int) Math.Floor(_cam.ScreenToWorld(Mouse.GetState().X,Mouse.GetState().Y).X);
+        }
+
+        public static int GetSelectedY()
+        {
+            return (int) Math.Floor(_cam.ScreenToWorld(Mouse.GetState().X,Mouse.GetState().Y).Y);
         }
     }
 }

@@ -3,7 +3,8 @@
 using System;
 using System.Collections.Generic;
 using Collector.ThirdPartyCode;
-using Microsoft.Xna.Framework.Graphics;
+using Humper;
+using Microsoft.Xna.Framework;
 
 namespace Collector.Dimension
 {
@@ -11,7 +12,10 @@ namespace Collector.Dimension
     {
         public static Dictionary<Tuple<int, int, int>, Blocks> LoadedChunks { get; } = new Dictionary<Tuple<int, int, int>, Blocks>();
         private static readonly Dictionary<Tuple<int, int, int>, Blocks> SavedChunks = new Dictionary<Tuple<int, int, int>, Blocks>();
-        
+        private static readonly Dictionary<Tuple<int, int>, Collision> savedCollisions = new Dictionary<Tuple<int, int>, Collision>();
+        public static readonly Dictionary<Tuple<int,int>, Collision> loadedCollisions = new Dictionary<Tuple<int, int>, Collision>();
+
+
         private static readonly OpenSimplexNoise Gen1 = new OpenSimplexNoise(IRestrictions.Seed+ 1);
         private static readonly OpenSimplexNoise Gen2 = new OpenSimplexNoise(IRestrictions.Seed);
 
@@ -25,28 +29,37 @@ namespace Collector.Dimension
 
         private static void SetBlock(int x, int y, int z, Blocks name)
         {
-            LoadedChunks[new Tuple<int, int, int>(x, y, z)] = name;
-            SavedChunks[new Tuple<int,int,int>(x, y, z)] = name;
+            var tuple = new Tuple<int, int, int>(x, y, z);
+            var pair = new Tuple<int, int>(x, y);
+            
+            loadedCollisions[pair] = new Collision(x,y,IRestrictions.TileSize,false);
+            savedCollisions[pair] = new Collision(x,y,IRestrictions.TileSize,false);
+            LoadedChunks[tuple] = name;
+            SavedChunks[tuple] = name;
         }
 
         public static void PlaceBlock(int x, int y, Blocks name)
         {
-            var triple = new Tuple<int, int, int>(x, y, 1);
-            if (!LoadedChunks.ContainsKey(triple)) return;
-            if (LoadedChunks[triple].Equals(Blocks.BlockAir))
+            var tuple = new Tuple<int, int, int>(x, y, 1);
+            if (!LoadedChunks.ContainsKey(tuple)) return;
+            if (LoadedChunks[tuple].Equals(Blocks.BlockAir))
             {
                 SetBlock(x, y, 1, name);
             }
         }
 
         public static void RemoveBlock(int x, int y){
-            var triple = new Tuple<int, int, int>(x, y, 1);
+            var tuple = new Tuple<int, int, int>(x, y, 1);
+            var pair = new Tuple<int,int>(x,y);
             
-            if (!LoadedChunks.ContainsKey(triple)) return;
-            if (LoadedChunks[triple].Equals(Blocks.BlockAir)) return;
+            if (!LoadedChunks.ContainsKey(tuple)) return;
+            if (LoadedChunks[tuple].Equals(Blocks.BlockAir)) return;
             
-            LoadedChunks[triple] = Blocks.BlockAir;
-            SavedChunks[triple] = Blocks.BlockAir;
+            loadedCollisions[pair] = null;
+            savedCollisions[pair] = null;
+
+            LoadedChunks[tuple] = Blocks.BlockAir;
+            SavedChunks[tuple] = Blocks.BlockAir;
         }
 
         public static void UngenerateChunk(int x, int y) {

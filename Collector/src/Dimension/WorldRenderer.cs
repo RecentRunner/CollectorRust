@@ -27,8 +27,8 @@ namespace Collector.Dimension
                 batch.Draw(
                     Main.Materials[Chunks.LoadedChunks[chunkpair]],
                     new Rectangle(
-                        chunkpair.Item1 << IRestrictions.TileShift,
-                        chunkpair.Item2 << IRestrictions.TileShift,
+                        chunkpair.Item1,
+                        chunkpair.Item2,
                         IRestrictions.TileSize, IRestrictions.TileSize
                     ),
                     Color.White
