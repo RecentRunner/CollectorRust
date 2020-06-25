@@ -18,6 +18,9 @@ namespace Collector.Dimension
             _inputController = inputController;
             _spriteBatch = spriteBatch;
             _main = main;
+            Chunks.Impassable.Add(Blocks.BlockWater);
+            Chunks.Impassable.Add(Blocks.BlockRoof);
+            Chunks.Impassable.Add(Blocks.BlockWall);
         }
 
         private static void DrawWorld(SpriteBatch batch, int layer)
@@ -40,10 +43,11 @@ namespace Collector.Dimension
         {
             //Higher means draws in a lower layer
             DrawWorld(_spriteBatch,0);
+            _playerMouse.Draw();
             DrawWorld(_spriteBatch,1);
             _inputController.Draw();
-            _inputController.PlayerInput(_main,_playerMouse,gameTime);
-            DrawWorld(_spriteBatch,2);
+            _inputController.PlayerInput(_main,gameTime);
+            //DrawWorld(_spriteBatch,2);
         }
     }
 }

@@ -1,35 +1,44 @@
 using System;
-using System.Collections.Generic;
+using System.Linq;
 using Collector.Dimension;
-using Humper;
 using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Media;
+using Microsoft.Xna.Framework.Graphics;
 using MonoGame.Extended;
-using MonoGame.Extended.Collections;
-using Collision = Collector.Dimension.Collision;
+using RectangleF = Humper.Base.RectangleF;
+using Vector2 = Microsoft.Xna.Framework.Vector2;
+
 
 namespace Collector.Character
 {
     public class Player : IRestrictions
     {
-        public static int X { get; private set; }
-        public static int Y { get; private set; }
-        private static Dictionary<string, Rectangle> Animation { get; set; }
-        public static Rectangle PlayerBounds;
+        public static float X { get; private set; }
+        public static float Y { get; private set; }
+
+        public static RectangleF PlayerBounds;
 
         public Player(int x, int y)
         {
-            PlayerBounds = new Rectangle(X,Y,IRestrictions.TileSize,IRestrictions.TileSize);
             X = x;
             Y = y;
+            PlayerBounds = new RectangleF(x,y, IRestrictions.TileSize*0.5f, IRestrictions.TileSize*0.35f);
         }
 
-        public static void Move(OrthographicCamera cam, int x, int y)
+        public static void Move(OrthographicCamera cam, float x, float y)
         {
             X += x;
             Y += y;
-            cam.Move(new Vector2(x+IRestrictions.TileSize/2, y+IRestrictions.TileSize/2));
-            PlayerBounds.Location = new Point(X,Y);
+            PlayerBounds.X = X+0.2f;
+            PlayerBounds.Y = Y+1.5f;
+            
+            cam.Move(new Vector2(x, y));
+            if (!Chunks.loadedCollisions.Values.Any(collisionsValue => collisionsValue.Rectangle.Intersects(PlayerBounds))) return;
+            
+            X -= x;
+            Y -= y;
+            cam.Move(new Vector2(-x, -y));
+            PlayerBounds.X -= X;
+            PlayerBounds.Y -= Y;
         }
     }
 }

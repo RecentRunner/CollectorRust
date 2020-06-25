@@ -5,6 +5,8 @@ using System.Collections.Generic;
 using Collector.ThirdPartyCode;
 using Humper;
 using Microsoft.Xna.Framework;
+using MonoGame.Extended;
+using Collision = Collector.Character.Collision;
 
 namespace Collector.Dimension
 {
@@ -13,7 +15,8 @@ namespace Collector.Dimension
         public static Dictionary<Tuple<int, int, int>, Blocks> LoadedChunks { get; } = new Dictionary<Tuple<int, int, int>, Blocks>();
         private static readonly Dictionary<Tuple<int, int, int>, Blocks> SavedChunks = new Dictionary<Tuple<int, int, int>, Blocks>();
         private static readonly Dictionary<Tuple<int, int>, Collision> savedCollisions = new Dictionary<Tuple<int, int>, Collision>();
-        public static readonly Dictionary<Tuple<int,int>, Collision> loadedCollisions = new Dictionary<Tuple<int, int>, Collision>();
+        public static readonly Dictionary<Tuple<int, int>, Collision> loadedCollisions = new Dictionary<Tuple<int, int>, Collision>();
+        public static readonly List<Blocks> Impassable = new List<Blocks>();
 
 
         private static readonly OpenSimplexNoise Gen1 = new OpenSimplexNoise(IRestrictions.Seed+ 1);
@@ -32,8 +35,8 @@ namespace Collector.Dimension
             var tuple = new Tuple<int, int, int>(x, y, z);
             var pair = new Tuple<int, int>(x, y);
             
-            loadedCollisions[pair] = new Collision(x,y,IRestrictions.TileSize,false);
-            savedCollisions[pair] = new Collision(x,y,IRestrictions.TileSize,false);
+            loadedCollisions[pair] = new Collision(x,y,IRestrictions.TileSize);
+            savedCollisions[pair] = new Collision(x,y,IRestrictions.TileSize);
             LoadedChunks[tuple] = name;
             SavedChunks[tuple] = name;
         }
@@ -55,16 +58,16 @@ namespace Collector.Dimension
             if (!LoadedChunks.ContainsKey(tuple)) return;
             if (LoadedChunks[tuple].Equals(Blocks.BlockAir)) return;
             
-            loadedCollisions[pair] = null;
-            savedCollisions[pair] = null;
+            loadedCollisions.Remove(pair);
+            savedCollisions.Remove(pair);
 
             LoadedChunks[tuple] = Blocks.BlockAir;
             SavedChunks[tuple] = Blocks.BlockAir;
         }
 
-        public static void UngenerateChunk(int x, int y) {
-            var startX = x << IRestrictions.ChunkShift;
-            var startY = y << IRestrictions.ChunkShift;
+        public static void UngenerateChunk(float x, float y) {
+            var startX = (int)x << IRestrictions.ChunkShift;
+            var startY = (int)y << IRestrictions.ChunkShift;
             var endX = startX + IRestrictions.ChunkSize;
             var endY = startY + IRestrictions.ChunkSize;
 
@@ -83,9 +86,9 @@ namespace Collector.Dimension
             }
         }
 
-        public static void GenerateChunk(int x, int y) {
-            var startX = x << IRestrictions.ChunkShift;
-            var startY = y << IRestrictions.ChunkShift;
+        public static void GenerateChunk(float x, float y) {
+            var startX = (int)x << IRestrictions.ChunkShift;
+            var startY = (int)y << IRestrictions.ChunkShift;
             var endX = startX + IRestrictions.ChunkSize;
             var endY = startY + IRestrictions.ChunkSize;
 
@@ -97,8 +100,16 @@ namespace Collector.Dimension
                         LoadedChunks.Add(triple,SavedChunks[triple]);
                     }
                     else {
-                        LoadedChunks.Add(triple, GetTerrain(i, j));
-                        SavedChunks.Add(triple, GetTerrain(i,j));
+                        var terrain = GetTerrain(i, j);
+                        var pair = new Tuple<int, int>(i, j);
+                        if (Impassable.Contains(terrain))
+                        {
+                            loadedCollisions[pair] = new Collision(i,j,IRestrictions.TileSize);
+                            savedCollisions[pair] = new Collision(i,j,IRestrictions.TileSize);
+                        }
+
+                        LoadedChunks.Add(triple, terrain);
+                        SavedChunks.Add(triple, terrain);
                     }
                 }
             }
@@ -147,7 +158,7 @@ namespace Collector.Dimension
 
             return GetBiomeBlock(moisture, elevation);
         }
-
+        
         private static Blocks GetBiomeBlock(double moisture, double elevation) {
             var biome = GetBiome(moisture, elevation);
             if (biome.Equals("Tundra")) return Blocks.BlockSnow;
@@ -196,8 +207,8 @@ namespace Collector.Dimension
             return moisture < 0.66 ? "TropicalSeasonalForest" : "TropicalRainForest";
         }
 
-        public static bool IsEmpty(int x, int y){
-            return !LoadedChunks.ContainsKey(new Tuple<int,int,int>(x * 8, y * 8,0));
+        public static bool IsEmpty(float x, float y){
+            return !LoadedChunks.ContainsKey(new Tuple<int,int,int>((int)x * 8, (int)y * 8,0));
         }
     }
 }
