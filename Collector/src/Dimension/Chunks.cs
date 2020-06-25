@@ -14,8 +14,8 @@ namespace Collector.Dimension
     {
         public static Dictionary<Tuple<int, int, int>, Blocks> LoadedChunks { get; } = new Dictionary<Tuple<int, int, int>, Blocks>();
         private static readonly Dictionary<Tuple<int, int, int>, Blocks> SavedChunks = new Dictionary<Tuple<int, int, int>, Blocks>();
-        private static readonly Dictionary<Tuple<int, int>, Collision> savedCollisions = new Dictionary<Tuple<int, int>, Collision>();
-        public static readonly Dictionary<Tuple<int, int>, Collision> loadedCollisions = new Dictionary<Tuple<int, int>, Collision>();
+        public static readonly Dictionary<Tuple<int, int>, Collision> LoadedCollisions = new Dictionary<Tuple<int, int>, Collision>();
+        public static readonly Dictionary<Tuple<int, int>, Collision> SavedCollisions = new Dictionary<Tuple<int, int>, Collision>();
         public static readonly List<Blocks> Impassable = new List<Blocks>();
 
 
@@ -35,8 +35,8 @@ namespace Collector.Dimension
             var tuple = new Tuple<int, int, int>(x, y, z);
             var pair = new Tuple<int, int>(x, y);
             
-            loadedCollisions[pair] = new Collision(x,y,IRestrictions.TileSize);
-            savedCollisions[pair] = new Collision(x,y,IRestrictions.TileSize);
+            LoadedCollisions[pair] = new Collision(x,y);
+            SavedCollisions[pair] = new Collision(x,y);
             LoadedChunks[tuple] = name;
             SavedChunks[tuple] = name;
         }
@@ -58,8 +58,8 @@ namespace Collector.Dimension
             if (!LoadedChunks.ContainsKey(tuple)) return;
             if (LoadedChunks[tuple].Equals(Blocks.BlockAir)) return;
             
-            loadedCollisions.Remove(pair);
-            savedCollisions.Remove(pair);
+            LoadedCollisions.Remove(pair);
+            SavedCollisions.Remove(pair);
 
             LoadedChunks[tuple] = Blocks.BlockAir;
             SavedChunks[tuple] = Blocks.BlockAir;
@@ -75,13 +75,8 @@ namespace Collector.Dimension
             for (var i = startX; i != endX; i++) {
                 for (var j = startY; j != endY; j++) {
                     LoadedChunks.Remove(new Tuple<int,int,int>(i, j, 0));
-                }
-            }
-            //Second Layer
-            for (var i = startX; i != endX; i++){
-                for (var j = startY; j != endY; j++) {
-                    var triple = new Tuple<int, int, int>(i, j,1);
-                    LoadedChunks.Remove(triple);
+                    LoadedChunks.Remove(new Tuple<int, int, int>(i, j,1));
+                    LoadedCollisions.Remove(new Tuple<int, int>(i,j));
                 }
             }
         }
@@ -96,16 +91,22 @@ namespace Collector.Dimension
             for (var i = startX; i != endX; i++) {
                 for (var j = startY; j != endY; j++) {
                     var triple = new Tuple<int, int, int>(i, j, 0);
+                    var pair = new Tuple<int, int>(i,j);
+                    if (SavedCollisions.ContainsKey(pair))
+                    {
+                        LoadedCollisions.Add(pair, SavedCollisions[pair]);
+
+                    }
                     if(SavedChunks.ContainsKey(triple)){
                         LoadedChunks.Add(triple,SavedChunks[triple]);
                     }
                     else {
                         var terrain = GetTerrain(i, j);
-                        var pair = new Tuple<int, int>(i, j);
                         if (Impassable.Contains(terrain))
                         {
-                            loadedCollisions[pair] = new Collision(i,j,IRestrictions.TileSize);
-                            savedCollisions[pair] = new Collision(i,j,IRestrictions.TileSize);
+                            var collision = new Collision(i,j);
+                            LoadedCollisions[pair] = collision;
+                            SavedCollisions[pair] = collision;
                         }
 
                         LoadedChunks.Add(triple, terrain);

@@ -5,13 +5,11 @@ namespace Collector.Character
 {
     public class Collision
     {
-        private readonly int _tileWidth;
         public RectangleF Rectangle { get; private set; }
         
-        public Collision(int x, int y,int tileWidth)
+        public Collision(int x, int y)
         {
-            _tileWidth = tileWidth;
-            Rectangle = new RectangleF(x,y,tileWidth,tileWidth);
+            Rectangle = new RectangleF(x,y,IRestrictions.TileSize,IRestrictions.TileSize);
         }
     }
 }
