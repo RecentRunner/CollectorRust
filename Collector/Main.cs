@@ -3,11 +3,14 @@ using System.Collections.Generic;
 using System.IO;
 using Collector.Character;
 using Collector.Dimension;
+using Collector.UI;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 using MonoGame.Extended;
 using MonoGame.Extended.ViewportAdapters;
+using Myra;
+using Myra.Graphics2D.UI;
 
 namespace Collector
 {
@@ -21,6 +24,8 @@ namespace Collector
         private static OrthographicCamera _cam;
         private static int _virtualWidth;
         private static int _virtualHeight;
+        private Desktop _desktop;
+        private Gui _gui;
         private WorldRenderer WorldRenderer { get; set; }
         public static Dictionary<Blocks, Texture2D> Materials { get; } = new Dictionary<Blocks, Texture2D>();
 
@@ -38,6 +43,8 @@ namespace Collector
         protected override void Initialize()
         {
             // TODO: Add your initialization logic here
+            _gui = new Gui(_desktop);
+
             base.Initialize();
 
             foreach (Blocks name in Enum.GetValues(typeof(Blocks))) 
@@ -47,18 +54,27 @@ namespace Collector
 
             _virtualWidth = GraphicsAdapter.DefaultAdapter.CurrentDisplayMode.Width;
             _virtualHeight = GraphicsAdapter.DefaultAdapter.CurrentDisplayMode.Height;
-            
+
             var viewportAdapter = new BoxingViewportAdapter(Window, GraphicsDevice, _virtualWidth, _virtualHeight);
             _player = new Player(0, 0);
             _cam = new OrthographicCamera(viewportAdapter);
             _cam.LookAt(new Vector2(Player.X, Player.Y));
             _cam.Zoom = IRestrictions.Zoom;
-            
+
             _spriteBatch = new SpriteBatch(GraphicsDevice);
             _playerMouse = new PlayerMouse(Content, _spriteBatch, _cam);
             _inputController = new InputController(_cam, _spriteBatch, Content);
             WorldRenderer = new WorldRenderer(_playerMouse, _inputController, _spriteBatch, this);
         }
+
+        protected override void LoadContent()
+        {
+            base.LoadContent();
+            MyraEnvironment.Game = this;
+
+            _gui.LoadGUI();
+        }
+
 
         protected override void Update(GameTime gameTime)
         {
@@ -66,6 +82,7 @@ namespace Collector
             base.Update(gameTime);
             World.LoadChunks();
             World.UnloadChunks();
+            _gui.Update();
         }
 
         protected override void Draw(GameTime gameTime)
@@ -78,6 +95,7 @@ namespace Collector
             _playerMouse.Draw();
             WorldRenderer.Draw(gameTime);
             _spriteBatch.End();
+            _gui.Render();
         }
     }
 }

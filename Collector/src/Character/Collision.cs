@@ -5,7 +5,7 @@ namespace Collector.Character
 {
     public class Collision
     {
-        public RectangleF Rectangle { get; private set; }
+        public RectangleF Rectangle { get; }
         
         public Collision(int x, int y)
         {

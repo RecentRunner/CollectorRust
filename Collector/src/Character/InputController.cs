@@ -166,8 +166,13 @@ namespace Collector.Character
             }
             if (mouseState.RightButton == ButtonState.Pressed)
             {
-                Chunks.PlaceBlock(PlayerMouse.GetSelectedX(),PlayerMouse.GetSelectedY(),Blocks.BlockWood);
+                PlaceSelectedBlock(Inventory.GetSelectedItem());
             }
+        }
+
+        private static void PlaceSelectedBlock(Blocks selectedItem)
+        {
+            Chunks.PlaceBlock(PlayerMouse.GetSelectedX(), PlayerMouse.GetSelectedY(), selectedItem);
         }
 
         private void UpdateAnimationFrame(GameTime gameTime)

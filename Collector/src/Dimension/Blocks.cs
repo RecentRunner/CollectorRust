@@ -1,15 +1,15 @@
 namespace Collector.Dimension
 {
-    public enum Blocks
+    public enum Blocks : byte
     {
-        BlockAir,
-        BlockGrass,
-        BlockWood,
-        BlockStone,
-        BlockSnow,
-        BlockSand,
-        BlockRoof,
-        BlockWall,
-        BlockWater
+        BlockAir = 0,
+        BlockGrass = 1,
+        BlockWood = 2,
+        BlockStone = 3,
+        BlockSnow = 4,
+        BlockSand = 5,
+        BlockRoof = 6,
+        BlockWall = 7,
+        BlockWater = 8
     }
 }
