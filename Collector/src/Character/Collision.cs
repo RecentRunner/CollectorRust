@@ -1,5 +1,5 @@
 
-using Humper.Base;
+using MonoGame.Extended;
 
 namespace Collector.Character
 {

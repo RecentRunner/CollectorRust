@@ -3,9 +3,6 @@
 using System;
 using System.Collections.Generic;
 using Collector.ThirdPartyCode;
-using Humper;
-using Microsoft.Xna.Framework;
-using MonoGame.Extended;
 using Collision = Collector.Character.Collision;
 
 namespace Collector.Dimension

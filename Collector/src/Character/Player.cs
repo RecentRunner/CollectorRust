@@ -1,10 +1,6 @@
-using System;
 using System.Linq;
 using Collector.Dimension;
-using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Graphics;
 using MonoGame.Extended;
-using RectangleF = Humper.Base.RectangleF;
 using Vector2 = Microsoft.Xna.Framework.Vector2;
 
 
