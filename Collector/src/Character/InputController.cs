@@ -104,7 +104,7 @@ namespace Collector.Character
             var mouseState = Mouse.GetState();
             if (keyboardState.IsKeyDown(Keys.Escape))
             {
-                _main.Quit(main);
+                _main.Quit();
             }
 
             if (keyboardState.IsKeyUp(Keys.W) && keyboardState.IsKeyUp(Keys.A) && keyboardState.IsKeyUp(Keys.S) &&

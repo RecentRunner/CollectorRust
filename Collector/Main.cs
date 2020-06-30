@@ -16,15 +16,14 @@ namespace Collector
 {
     public class Main : Game
     {
-        private GraphicsDeviceManager _graphics;
         private SpriteBatch _spriteBatch;
         private InputController _inputController;
-        private Player _player;
+        private Player Player1 { get; set; }
         private PlayerMouse _playerMouse;
-        private static OrthographicCamera _cam;
-        private static int _virtualWidth;
-        private static int _virtualHeight;
-        private Desktop _desktop;
+        private OrthographicCamera _cam;
+        private int _virtualWidth;
+        private int _virtualHeight;
+        private readonly Desktop _desktop;
         private Gui _gui;
         private World _world;
         private WorldRenderer WorldRenderer { get; set; }
@@ -33,12 +32,13 @@ namespace Collector
 
         public Main()
         {
-            _graphics = new GraphicsDeviceManager(this);
+            _desktop = new Desktop();
+            var graphics = new GraphicsDeviceManager(this);
             Content.RootDirectory = "Content";
 
             IsMouseVisible = true;
             IsFixedTimeStep = true;
-            _graphics.PreferMultiSampling = true;
+            graphics.PreferMultiSampling = true;
         }
 
         protected override void Initialize()
@@ -48,9 +48,9 @@ namespace Collector
 
             base.Initialize();
 
-            foreach (Blocks name in Enum.GetValues(typeof(Blocks))) 
+            foreach (Blocks name in Enum.GetValues(typeof(Blocks)))
             {
-                Materials.Add(name,Content.Load<Texture2D>(name.ToString()));
+                Materials.Add(name, Content.Load<Texture2D>(name.ToString()));
             }
 
             _virtualWidth = GraphicsAdapter.DefaultAdapter.CurrentDisplayMode.Width;
@@ -58,14 +58,14 @@ namespace Collector
 
             var viewportAdapter = new BoxingViewportAdapter(Window, GraphicsDevice, _virtualWidth, _virtualHeight);
             _world = new World();
-            _player = new Player(0, 0);
+            Player1 = new Player(0, 0);
             _cam = new OrthographicCamera(viewportAdapter);
             _cam.LookAt(new Vector2(Player.X, Player.Y));
             _cam.Zoom = IRestrictions.Zoom;
 
             _spriteBatch = new SpriteBatch(GraphicsDevice);
             _playerMouse = new PlayerMouse(Content, _spriteBatch, _cam);
-            _inputController = new InputController(_cam, _spriteBatch, Content,this);
+            _inputController = new InputController(_cam, _spriteBatch, Content, this);
             WorldRenderer = new WorldRenderer(_playerMouse, _inputController, _spriteBatch, this);
         }
 
@@ -87,18 +87,20 @@ namespace Collector
             _gui.Update();
         }
 
-        public void Quit(Game main)
+        public void Quit()
         {
             Exit();
         }
 
         protected override void Draw(GameTime gameTime)
-        {// TODO: Add your drawing code here
+        {
+            // TODO: Add your drawing code here
             var transformMatrix = _cam.GetViewMatrix();
             base.Draw(gameTime);
             GraphicsDevice.Clear(Color.CornflowerBlue);
             //Turn on Anti-aliasing by changing SamplerState.PointClamp
-            _spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend, SamplerState.PointClamp, DepthStencilState.None, RasterizerState.CullNone, transformMatrix: transformMatrix);
+            _spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend, SamplerState.PointClamp,
+                DepthStencilState.None, RasterizerState.CullNone, transformMatrix: transformMatrix);
             _playerMouse.Draw();
             WorldRenderer.Draw(gameTime);
             _spriteBatch.End();
