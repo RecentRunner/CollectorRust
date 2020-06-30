@@ -26,6 +26,7 @@ namespace Collector
         private static int _virtualHeight;
         private Desktop _desktop;
         private Gui _gui;
+        private World _world;
         private WorldRenderer WorldRenderer { get; set; }
         public static Dictionary<Blocks, Texture2D> Materials { get; } = new Dictionary<Blocks, Texture2D>();
 
@@ -56,6 +57,7 @@ namespace Collector
             _virtualHeight = GraphicsAdapter.DefaultAdapter.CurrentDisplayMode.Height;
 
             var viewportAdapter = new BoxingViewportAdapter(Window, GraphicsDevice, _virtualWidth, _virtualHeight);
+            _world = new World();
             _player = new Player(0, 0);
             _cam = new OrthographicCamera(viewportAdapter);
             _cam.LookAt(new Vector2(Player.X, Player.Y));
@@ -63,7 +65,7 @@ namespace Collector
 
             _spriteBatch = new SpriteBatch(GraphicsDevice);
             _playerMouse = new PlayerMouse(Content, _spriteBatch, _cam);
-            _inputController = new InputController(_cam, _spriteBatch, Content);
+            _inputController = new InputController(_cam, _spriteBatch, Content,this);
             WorldRenderer = new WorldRenderer(_playerMouse, _inputController, _spriteBatch, this);
         }
 
@@ -80,9 +82,14 @@ namespace Collector
         {
             // TODO: Add your update logic here/*
             base.Update(gameTime);
-            World.LoadChunks();
-            World.UnloadChunks();
+            _world.LoadChunks();
+            _world.UnloadChunks();
             _gui.Update();
+        }
+
+        public void Quit(Game main)
+        {
+            Exit();
         }
 
         protected override void Draw(GameTime gameTime)

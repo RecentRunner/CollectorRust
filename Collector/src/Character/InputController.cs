@@ -17,13 +17,15 @@ namespace Collector.Character
         private string Input { get; set; }
         private int _frameNumber;
         private float _timeSinceLastFrame;
+        private Main _main;
 
 
-        public InputController(OrthographicCamera cam, SpriteBatch spriteBatch, ContentManager contentManager)
+        public InputController(OrthographicCamera cam, SpriteBatch spriteBatch, ContentManager contentManager, Main main)
         {
             Input = "Down";
             _cam = cam;
             _spriteBatch = spriteBatch;
+            _main = main;
             _frameNumber = 0;
             _texture = contentManager.Load<Texture2D>("man");
             const int tileSize = 32;
@@ -102,7 +104,7 @@ namespace Collector.Character
             var mouseState = Mouse.GetState();
             if (keyboardState.IsKeyDown(Keys.Escape))
             {
-                Quit(main);
+                _main.Quit(main);
             }
 
             if (keyboardState.IsKeyUp(Keys.W) && keyboardState.IsKeyUp(Keys.A) && keyboardState.IsKeyUp(Keys.S) &&
@@ -170,7 +172,7 @@ namespace Collector.Character
             }
         }
 
-        private static void PlaceSelectedBlock(Blocks selectedItem)
+        private void PlaceSelectedBlock(Blocks selectedItem)
         {
             Chunks.PlaceBlock(PlayerMouse.GetSelectedX(), PlayerMouse.GetSelectedY(), selectedItem);
         }
@@ -182,11 +184,6 @@ namespace Collector.Character
             _frameNumber++;
             _timeSinceLastFrame = 0;
             if (_frameNumber > 3) _frameNumber = 0;
-        }
-
-        private static void Quit(Game main)
-        {
-            main.Exit();
         }
 
         public void Draw()

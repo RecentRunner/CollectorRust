@@ -3,21 +3,21 @@ using Collector.Character;
 
 namespace Collector.Dimension
 {
-    public static class World {
-        private static void GenerateWorld(float x, float y)
+    public class World {
+        private void GenerateWorld(float x, float y)
         {
             if (Chunks.IsEmpty(x, y)) {
                 Chunks.GenerateChunk(x, y);
             }
         }
 
-        private static void UngenerateWorld(float x, float y) {
+        private void UngenerateWorld(float x, float y) {
             if (!Chunks.IsEmpty(x, y)) {
                 Chunks.UngenerateChunk(x, y);
             }
         }
 
-        public static void LoadChunks()
+        public void LoadChunks()
         {
             for (var i = -(IRestrictions.RenderDistance); i < IRestrictions.RenderDistance; i++) {
                 for (var j = -(IRestrictions.RenderDistance); j < IRestrictions.RenderDistance; j++) {
@@ -29,7 +29,7 @@ namespace Collector.Dimension
             }
         }
 
-        public static void UnloadChunks() {
+        public void UnloadChunks() {
             for (var i = -IRestrictions.RenderDistance; i < IRestrictions.RenderDistance+1; i++) {
                 //Down
                 UngenerateWorld(
