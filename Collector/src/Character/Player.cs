@@ -10,37 +10,38 @@ namespace Collector.Character
     {
         public static float X { get; private set; }
         public static float Y { get; private set; }
+        private RectangleF _playerBounds;
+        private Chunks _chunks { get; }
 
-        public static RectangleF PlayerBounds;
-
-        public Player(int x, int y)
+        public Player(int x, int y, Chunks chunks)
         {
             X = x;
             Y = y;
-            PlayerBounds = new RectangleF(x, y, IRestrictions.TileSize * 0.5f, IRestrictions.TileSize * 0.35f);
+            _chunks = chunks;
+            _playerBounds = new RectangleF(x, y, IRestrictions.TileSize * 0.5f, IRestrictions.TileSize * 0.35f);
         }
 
-        public static void Move(OrthographicCamera cam, float x, float y)
+        public void Move(OrthographicCamera cam, float x, float y)
         {
             Teleport(cam, x, 0);
-            if (Chunks.LoadedCollisions.Values.Any(collisionsValue => collisionsValue.Rectangle.Intersects(PlayerBounds)))
+            if (_chunks.LoadedCollisions.Values.Any(collisionsValue => collisionsValue.Rectangle.Intersects(_playerBounds)))
             {
                 Teleport(cam, -x, 0);
             }
 
             Teleport(cam, 0, y);
-            if (Chunks.LoadedCollisions.Values.Any(collisionsValue => collisionsValue.Rectangle.Intersects(PlayerBounds)))
+            if (_chunks.LoadedCollisions.Values.Any(collisionsValue => collisionsValue.Rectangle.Intersects(_playerBounds)))
             {
                 Teleport(cam, 0, -y);
             }
         }
 
-        private static void Teleport(OrthographicCamera cam, float x, float y)
+        private void Teleport(OrthographicCamera cam, float x, float y)
         {
             X += x;
             Y += y;
-            PlayerBounds.X = X + 0.2f;
-            PlayerBounds.Y = Y + 1.5f;
+            _playerBounds.X = X + 0.2f;
+            _playerBounds.Y = Y + 1.5f;
             cam.Move(new Vector2(x, y));
         }
     }

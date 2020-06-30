@@ -1,4 +1,4 @@
-namespace Collector.Character
+namespace Collector.Dimension
 {
     public class Autotiling
     {

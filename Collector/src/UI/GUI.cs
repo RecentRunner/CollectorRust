@@ -29,13 +29,13 @@ namespace Collector.UI
             grid.RowsProportions.Add(new Proportion(ProportionType.Auto));
             grid.RowsProportions.Add(new Proportion(ProportionType.Auto));
 
-
             //Position
             _combo = new ComboBox
             {
                 GridColumn = 0,
                 GridRow = 0
             };
+            
             _button = new TextButton
             {
                 GridColumn = 1,

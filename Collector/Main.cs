@@ -25,7 +25,7 @@ namespace Collector
         private int _virtualHeight;
         private readonly Desktop _desktop;
         private Gui _gui;
-        private World _world;
+        private Chunks _chunks;
         private WorldRenderer WorldRenderer { get; set; }
         public static Dictionary<Blocks, Texture2D> Materials { get; } = new Dictionary<Blocks, Texture2D>();
 
@@ -57,16 +57,16 @@ namespace Collector
             _virtualHeight = GraphicsAdapter.DefaultAdapter.CurrentDisplayMode.Height;
 
             var viewportAdapter = new BoxingViewportAdapter(Window, GraphicsDevice, _virtualWidth, _virtualHeight);
-            _world = new World();
-            Player1 = new Player(0, 0);
+            _chunks = new Chunks();
+            Player1 = new Player(0, 0, _chunks);
             _cam = new OrthographicCamera(viewportAdapter);
             _cam.LookAt(new Vector2(Player.X, Player.Y));
             _cam.Zoom = IRestrictions.Zoom;
 
             _spriteBatch = new SpriteBatch(GraphicsDevice);
             _playerMouse = new PlayerMouse(Content, _spriteBatch, _cam);
-            _inputController = new InputController(_cam, _spriteBatch, Content, this);
-            WorldRenderer = new WorldRenderer(_playerMouse, _inputController, _spriteBatch, this);
+            _inputController = new InputController(_cam, _spriteBatch, Content, this,_chunks,Player1);
+            WorldRenderer = new WorldRenderer(_playerMouse, _inputController, _spriteBatch, this,_chunks);
         }
 
         protected override void LoadContent()
@@ -82,8 +82,8 @@ namespace Collector
         {
             // TODO: Add your update logic here/*
             base.Update(gameTime);
-            _world.LoadChunks();
-            _world.UnloadChunks();
+            _chunks.LoadChunks();
+            _chunks.UnloadChunks();
             _gui.Update();
         }
 

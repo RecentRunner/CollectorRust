@@ -17,15 +17,20 @@ namespace Collector.Character
         private string Input { get; set; }
         private int _frameNumber;
         private float _timeSinceLastFrame;
-        private Main _main;
+        private readonly Main _main;
+        private readonly Chunks _chunks;
+        private readonly Player _player;
 
 
-        public InputController(OrthographicCamera cam, SpriteBatch spriteBatch, ContentManager contentManager, Main main)
+
+        public InputController(OrthographicCamera cam, SpriteBatch spriteBatch, ContentManager contentManager, Main main, Chunks chunks, Player player)
         {
             Input = "Down";
             _cam = cam;
             _spriteBatch = spriteBatch;
             _main = main;
+            _chunks = chunks;
+            _player = player;
             _frameNumber = 0;
             _texture = contentManager.Load<Texture2D>("man");
             const int tileSize = 32;
@@ -97,7 +102,7 @@ namespace Collector.Character
             };
         }
 
-        public void PlayerInput(Main main, GameTime gameTime)
+        public void PlayerInput(GameTime gameTime)
         {
             const float movementSpeed = IRestrictions.MovementSpeed;
             var keyboardState = Keyboard.GetState();
@@ -117,42 +122,42 @@ namespace Collector.Character
             if (keyboardState.IsKeyDown(Keys.W) && keyboardState.IsKeyDown(Keys.D))
             {
                 Input = "UpRight";
-                Player.Move(_cam,movementSpeed*diagonalMovement,-movementSpeed*diagonalMovement);
+                _player.Move(_cam,movementSpeed*diagonalMovement,-movementSpeed*diagonalMovement);
             }
             else if (keyboardState.IsKeyDown(Keys.W) && keyboardState.IsKeyDown(Keys.A))
             {
-                Player.Move(_cam,-movementSpeed*diagonalMovement,-movementSpeed*diagonalMovement);
+                _player.Move(_cam,-movementSpeed*diagonalMovement,-movementSpeed*diagonalMovement);
                 Input = "UpLeft";
             }
             else if (keyboardState.IsKeyDown(Keys.S) && keyboardState.IsKeyDown(Keys.D))
             {
                 Input = "DownRight";
-                Player.Move(_cam,movementSpeed*diagonalMovement,movementSpeed*diagonalMovement);
+                _player.Move(_cam,movementSpeed*diagonalMovement,movementSpeed*diagonalMovement);
             }
             else if (keyboardState.IsKeyDown(Keys.S) && keyboardState.IsKeyDown(Keys.A))
             {
                 Input = "DownLeft";
-                Player.Move(_cam,-movementSpeed*diagonalMovement,movementSpeed*diagonalMovement);
+                _player.Move(_cam,-movementSpeed*diagonalMovement,movementSpeed*diagonalMovement);
             }
             else if (keyboardState.IsKeyDown(Keys.W))
             {
                 Input = "Up";
-                Player.Move(_cam,0,-movementSpeed);
+                _player.Move(_cam,0,-movementSpeed);
             }
             else if (keyboardState.IsKeyDown(Keys.A))
             {
                 Input = "Left";
-                Player.Move(_cam,-movementSpeed,0);
+                _player.Move(_cam,-movementSpeed,0);
             }
             else if (keyboardState.IsKeyDown(Keys.S))
             {
                 Input = "Down";
-                Player.Move(_cam,0,movementSpeed);
+                _player.Move(_cam,0,movementSpeed);
             }
             else if (keyboardState.IsKeyDown(Keys.D))
             {
                 Input = "Right";
-                Player.Move(_cam,movementSpeed,0);
+                _player.Move(_cam,movementSpeed,0);
             }
             if (keyboardState.IsKeyDown(Keys.Q))
             {
@@ -164,7 +169,7 @@ namespace Collector.Character
             }
             if (mouseState.LeftButton == ButtonState.Pressed)
             {
-                Chunks.RemoveBlock(PlayerMouse.GetSelectedX(),PlayerMouse.GetSelectedY());
+                _chunks.RemoveBlock(PlayerMouse.GetSelectedX(),PlayerMouse.GetSelectedY());
             }
             if (mouseState.RightButton == ButtonState.Pressed)
             {
@@ -174,7 +179,7 @@ namespace Collector.Character
 
         private void PlaceSelectedBlock(Blocks selectedItem)
         {
-            Chunks.PlaceBlock(PlayerMouse.GetSelectedX(), PlayerMouse.GetSelectedY(), selectedItem);
+            _chunks.PlaceBlock(PlayerMouse.GetSelectedX(), PlayerMouse.GetSelectedY(), selectedItem);
         }
 
         private void UpdateAnimationFrame(GameTime gameTime)

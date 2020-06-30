@@ -11,24 +11,26 @@ namespace Collector.Dimension
         private readonly InputController _inputController;
         private readonly SpriteBatch _spriteBatch;
         private readonly Main _main;
+        private readonly Chunks _chunks;
 
-        public WorldRenderer(PlayerMouse playerMouse, InputController inputController, SpriteBatch spriteBatch, Main main)
+        public WorldRenderer(PlayerMouse playerMouse, InputController inputController, SpriteBatch spriteBatch, Main main, Chunks chunks)
         {
             _playerMouse = playerMouse;
             _inputController = inputController;
             _spriteBatch = spriteBatch;
             _main = main;
-            Chunks.Impassable.Add(Blocks.BlockWater);
-            Chunks.Impassable.Add(Blocks.BlockRoof);
-            Chunks.Impassable.Add(Blocks.BlockWall);
+            _chunks = chunks;
+            _chunks.Impassable.Add(Blocks.BlockWater);
+            _chunks.Impassable.Add(Blocks.BlockRoof);
+            _chunks.Impassable.Add(Blocks.BlockWall);
         }
 
-        private static void DrawWorld(SpriteBatch batch, int layer)
+        private void DrawWorld(SpriteBatch batch, int layer)
         {
-            foreach (var chunkpair in Chunks.LoadedChunks.Keys.Where(chunkpair => layer==chunkpair.Item3))
+            foreach (var chunkpair in _chunks.LoadedChunks.Keys.Where(chunkpair => layer==chunkpair.Item3))
             {
                 batch.Draw(
-                    Main.Materials[Chunks.LoadedChunks[chunkpair]],
+                    Main.Materials[_chunks.LoadedChunks[chunkpair]],
                     new Rectangle(
                         chunkpair.Item1,
                         chunkpair.Item2,
@@ -46,7 +48,7 @@ namespace Collector.Dimension
             _playerMouse.Draw();
             DrawWorld(_spriteBatch,1);
             _inputController.Draw();
-            _inputController.PlayerInput(_main,gameTime);
+            _inputController.PlayerInput(gameTime);
             //DrawWorld(_spriteBatch,2);
         }
     }
