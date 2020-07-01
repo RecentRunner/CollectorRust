@@ -11,26 +11,26 @@ namespace Collector.Character
         public static float X { get; private set; }
         public static float Y { get; private set; }
         private RectangleF _playerBounds;
-        private Chunks _chunks { get; }
+        private World World { get; }
 
-        public Player(int x, int y, Chunks chunks)
+        public Player(int x, int y, World world)
         {
             X = x;
             Y = y;
-            _chunks = chunks;
+            World = world;
             _playerBounds = new RectangleF(x, y, IRestrictions.TileSize * 0.5f, IRestrictions.TileSize * 0.35f);
         }
 
         public void Move(OrthographicCamera cam, float x, float y)
         {
             Teleport(cam, x, 0);
-            if (_chunks.LoadedCollisions.Values.Any(collisionsValue => collisionsValue.Rectangle.Intersects(_playerBounds)))
+            if (World.LoadedCollisions.Values.Any(collisionsValue => collisionsValue.Rectangle.Intersects(_playerBounds)))
             {
                 Teleport(cam, -x, 0);
             }
 
             Teleport(cam, 0, y);
-            if (_chunks.LoadedCollisions.Values.Any(collisionsValue => collisionsValue.Rectangle.Intersects(_playerBounds)))
+            if (World.LoadedCollisions.Values.Any(collisionsValue => collisionsValue.Rectangle.Intersects(_playerBounds)))
             {
                 Teleport(cam, 0, -y);
             }

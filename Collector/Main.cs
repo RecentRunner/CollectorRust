@@ -25,7 +25,7 @@ namespace Collector
         private int _virtualHeight;
         private readonly Desktop _desktop;
         private Gui _gui;
-        private Chunks _chunks;
+        private World _world;
         private WorldRenderer WorldRenderer { get; set; }
         public static Dictionary<Blocks, Texture2D> Materials { get; } = new Dictionary<Blocks, Texture2D>();
 
@@ -43,7 +43,6 @@ namespace Collector
 
         protected override void Initialize()
         {
-            // TODO: Add your initialization logic here
             _gui = new Gui(_desktop);
 
             base.Initialize();
@@ -57,16 +56,16 @@ namespace Collector
             _virtualHeight = GraphicsAdapter.DefaultAdapter.CurrentDisplayMode.Height;
 
             var viewportAdapter = new BoxingViewportAdapter(Window, GraphicsDevice, _virtualWidth, _virtualHeight);
-            _chunks = new Chunks();
-            Player1 = new Player(0, 0, _chunks);
+            _world = new World();
+            Player1 = new Player(0, 0, _world);
             _cam = new OrthographicCamera(viewportAdapter);
             _cam.LookAt(new Vector2(Player.X, Player.Y));
             _cam.Zoom = IRestrictions.Zoom;
 
             _spriteBatch = new SpriteBatch(GraphicsDevice);
             _playerMouse = new PlayerMouse(Content, _spriteBatch, _cam);
-            _inputController = new InputController(_cam, _spriteBatch, Content, this,_chunks,Player1);
-            WorldRenderer = new WorldRenderer(_playerMouse, _inputController, _spriteBatch, this,_chunks);
+            _inputController = new InputController(_cam, _spriteBatch, Content, this,_world,Player1,_playerMouse);
+            WorldRenderer = new WorldRenderer(_playerMouse, _inputController, _spriteBatch, this,_world);
         }
 
         protected override void LoadContent()
@@ -74,17 +73,16 @@ namespace Collector
             base.LoadContent();
             MyraEnvironment.Game = this;
 
-            _gui.LoadGUI();
+            _gui.LoadGui();
         }
 
 
         protected override void Update(GameTime gameTime)
         {
-            // TODO: Add your update logic here/*
             base.Update(gameTime);
-            _chunks.LoadChunks();
-            _chunks.UnloadChunks();
-            _gui.Update();
+            _world.LoadChunks();
+            _world.UnloadChunks();
+            Gui.Update();
         }
 
         public void Quit()
@@ -94,7 +92,6 @@ namespace Collector
 
         protected override void Draw(GameTime gameTime)
         {
-            // TODO: Add your drawing code here
             var transformMatrix = _cam.GetViewMatrix();
             base.Draw(gameTime);
             GraphicsDevice.Clear(Color.CornflowerBlue);

@@ -16,7 +16,7 @@ namespace Collector.UI
             _desktop = desktop;
         }
 
-        public void LoadGUI()
+        public void LoadGui()
         {
             var grid = new Grid
             {
@@ -49,6 +49,8 @@ namespace Collector.UI
                 _combo.Items.Add(new ListItem(name.ToString(), Color.White));
             }
 
+            _combo.SelectedItem = _combo.Items[2];
+
             grid.Widgets.Add(_combo);
 
 
@@ -67,7 +69,7 @@ namespace Collector.UI
             };
         }
 
-        private Grid InventoryGrid()
+        private static Grid InventoryGrid()
         {
             var textBox1 = new TextBox {AcceptsKeyboardFocus = true};
             var checkBox1 = new CheckBox {Text = "Item1", GridRow = 1, AcceptsKeyboardFocus = false};
@@ -123,7 +125,7 @@ namespace Collector.UI
             return grid1;
         }
 
-        public void Update()
+        public static void Update()
         {
         }
 

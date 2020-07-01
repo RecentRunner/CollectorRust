@@ -8,7 +8,11 @@ public class Inventory {
     
     public static Blocks GetSelectedItem()
     {
-        return (Blocks) Gui._combo.SelectedIndex.Value;
+        if (Gui._combo.SelectedIndex != null) return (Blocks) Gui._combo.SelectedIndex.Value;
+        else
+        {
+            return Blocks.BlockAir;
+        }
     }
 
     public LinkedList<ItemStack> GetInventory() {

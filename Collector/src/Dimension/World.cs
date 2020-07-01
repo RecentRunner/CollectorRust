@@ -7,7 +7,7 @@ using Collector.ThirdPartyCode;
 
 namespace Collector.Dimension
 {
-    public class Chunks
+    public class World
     {
         public Dictionary<Tuple<int, int, int>, Blocks> LoadedChunks { get; } = new Dictionary<Tuple<int, int, int>, Blocks>();
         private readonly Dictionary<Tuple<int, int, int>, Blocks> _savedChunks = new Dictionary<Tuple<int, int, int>, Blocks>();
@@ -66,13 +66,6 @@ namespace Collector.Dimension
                 );
             }
         }
-        public void CreateStructures() {
-            const int i = 10;
-            SetBlock(3 + i, 2,1,Blocks.BlockWall);
-            SetBlock(4 + i, 2,1,Blocks.BlockWall);
-            SetBlock(3 + i, 3,1, Blocks.BlockRoof);
-            SetBlock(4 + i, 3,1,Blocks.BlockRoof);
-        }
 
         private void SetBlock(int x, int y, int z, Blocks name)
         {
@@ -109,7 +102,7 @@ namespace Collector.Dimension
             _savedChunks[tuple] = Blocks.BlockAir;
         }
 
-        public void UngenerateChunk(float x, float y) {
+        private void UngenerateChunk(float x, float y) {
             var startX = (int)x << IRestrictions.ChunkShift;
             var startY = (int)y << IRestrictions.ChunkShift;
             var endX = startX + IRestrictions.ChunkSize;
@@ -125,7 +118,7 @@ namespace Collector.Dimension
             }
         }
 
-        public void GenerateChunk(float x, float y) {
+        private void GenerateChunk(float x, float y) {
             var startX = (int)x << IRestrictions.ChunkShift;
             var startY = (int)y << IRestrictions.ChunkShift;
             var endX = startX + IRestrictions.ChunkSize;
@@ -252,7 +245,7 @@ namespace Collector.Dimension
             return moisture < 0.66 ? "TropicalSeasonalForest" : "TropicalRainForest";
         }
 
-        public bool IsEmpty(float x, float y){
+        private bool IsEmpty(float x, float y){
             return !LoadedChunks.ContainsKey(new Tuple<int,int,int>((int)x * 8, (int)y * 8,0));
         }
     }

@@ -18,19 +18,20 @@ namespace Collector.Character
         private int _frameNumber;
         private float _timeSinceLastFrame;
         private readonly Main _main;
-        private readonly Chunks _chunks;
+        private readonly World _world;
         private readonly Player _player;
+        private readonly PlayerMouse _playerMouse;
 
 
-
-        public InputController(OrthographicCamera cam, SpriteBatch spriteBatch, ContentManager contentManager, Main main, Chunks chunks, Player player)
+        public InputController(OrthographicCamera cam, SpriteBatch spriteBatch, ContentManager contentManager, Main main, World world, Player player, PlayerMouse playerMouse)
         {
             Input = "Down";
             _cam = cam;
             _spriteBatch = spriteBatch;
             _main = main;
-            _chunks = chunks;
+            _world = world;
             _player = player;
+            _playerMouse = playerMouse;
             _frameNumber = 0;
             _texture = contentManager.Load<Texture2D>("man");
             const int tileSize = 32;
@@ -169,7 +170,7 @@ namespace Collector.Character
             }
             if (mouseState.LeftButton == ButtonState.Pressed)
             {
-                _chunks.RemoveBlock(PlayerMouse.GetSelectedX(),PlayerMouse.GetSelectedY());
+                _world.RemoveBlock(PlayerMouse.GetSelectedX(),PlayerMouse.GetSelectedY());
             }
             if (mouseState.RightButton == ButtonState.Pressed)
             {
@@ -179,7 +180,7 @@ namespace Collector.Character
 
         private void PlaceSelectedBlock(Blocks selectedItem)
         {
-            _chunks.PlaceBlock(PlayerMouse.GetSelectedX(), PlayerMouse.GetSelectedY(), selectedItem);
+            _world.PlaceBlock(PlayerMouse.GetSelectedX(), PlayerMouse.GetSelectedY(), selectedItem);
         }
 
         private void UpdateAnimationFrame(GameTime gameTime)
