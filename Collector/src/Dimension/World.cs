@@ -10,7 +10,7 @@ namespace Collector.Dimension
     public class World
     {
         public Dictionary<Tuple<int, int, int>, Blocks> LoadedChunks { get; } = new Dictionary<Tuple<int, int, int>, Blocks>();
-        private readonly Dictionary<Tuple<int, int, int>, Blocks> _savedChunks = new Dictionary<Tuple<int, int, int>, Blocks>();
+        public readonly Dictionary<Tuple<int, int, int>, Blocks> SavedChunks = new Dictionary<Tuple<int, int, int>, Blocks>();
         public readonly Dictionary<Tuple<int, int>, Collision> LoadedCollisions = new Dictionary<Tuple<int, int>, Collision>();
         private readonly Dictionary<Tuple<int, int>, Collision> _savedCollisions = new Dictionary<Tuple<int, int>, Collision>();
         public readonly List<Blocks> Impassable = new List<Blocks>();
@@ -75,7 +75,7 @@ namespace Collector.Dimension
             LoadedCollisions[pair] = new Collision(x,y);
             _savedCollisions[pair] = new Collision(x,y);
             LoadedChunks[tuple] = name;
-            _savedChunks[tuple] = name;
+            SavedChunks[tuple] = name;
         }
 
         public void PlaceBlock(int x, int y, Blocks name)
@@ -99,7 +99,7 @@ namespace Collector.Dimension
             _savedCollisions.Remove(pair);
 
             LoadedChunks[tuple] = Blocks.BlockAir;
-            _savedChunks[tuple] = Blocks.BlockAir;
+            SavedChunks[tuple] = Blocks.BlockAir;
         }
 
         private void UngenerateChunk(float x, float y) {
@@ -126,29 +126,9 @@ namespace Collector.Dimension
 
             //Going from start of selected chunk to end of selected chunk in x and y
             for (var i = startX; i != endX; i++) {
-                for (var j = startY; j != endY; j++) {
-                    var triple = new Tuple<int, int, int>(i, j, 0);
-                    var pair = new Tuple<int, int>(i,j);
-                    if (_savedCollisions.ContainsKey(pair))
-                    {
-                        LoadedCollisions.Add(pair, _savedCollisions[pair]);
-
-                    }
-                    if(_savedChunks.ContainsKey(triple)){
-                        LoadedChunks.Add(triple,_savedChunks[triple]);
-                    }
-                    else {
-                        var terrain = GetTerrain(i, j);
-                        if (Impassable.Contains(terrain))
-                        {
-                            var collision = new Collision(i,j);
-                            LoadedCollisions[pair] = collision;
-                            _savedCollisions[pair] = collision;
-                        }
-
-                        LoadedChunks.Add(triple, terrain);
-                        _savedChunks.Add(triple, terrain);
-                    }
+                for (var j = startY; j != endY; j++)
+                {
+                    InitializeBlock(i, j);
                 }
             }
 
@@ -157,13 +137,41 @@ namespace Collector.Dimension
                 for (var j = startY; j != endY; j++) {
                     var triple = new Tuple<int, int, int>(i, j,1);
                     LoadedChunks[triple] = GetBlocks(i,j,1);
-                    _savedChunks[triple] = GetBlocks(i,j,1);
+                    SavedChunks[triple] = GetBlocks(i,j,1);
                 }
             }
         }
 
+        private void InitializeBlock(int i, int j)
+        {
+            var triple = new Tuple<int, int, int>(i, j, 0);
+            var pair = new Tuple<int, int>(i, j);
+            if (_savedCollisions.ContainsKey(pair))
+            {
+                LoadedCollisions.Add(pair, _savedCollisions[pair]);
+            }
+
+            if (SavedChunks.ContainsKey(triple))
+            {
+                LoadedChunks.Add(triple, SavedChunks[triple]);
+            }
+            else
+            {
+                var terrain = GetTerrain(i, j);
+                if (Impassable.Contains(terrain))
+                {
+                    var collision = new Collision(i, j);
+                    LoadedCollisions[pair] = collision;
+                    _savedCollisions[pair] = collision;
+                }
+
+                LoadedChunks.Add(triple, terrain);
+                SavedChunks.Add(triple, terrain);
+            }
+        }
+
         private Blocks GetBlocks(int x, int y, int z) {
-            return _savedChunks.GetValueOrDefault(new Tuple<int, int, int>(x, y, z), Blocks.BlockAir);
+            return SavedChunks.GetValueOrDefault(new Tuple<int, int, int>(x, y, z), Blocks.BlockAir);
         }
 
         private double Noise1(double nx, double ny) {
@@ -174,7 +182,7 @@ namespace Collector.Dimension
             return _gen2.Evaluate(nx, ny) / 2 + 0.5;
         }
 
-        private Blocks GetTerrain(int x, int y) {
+        public Blocks GetTerrain(int x, int y) {
             const double scale = 0.01;
             var nx = x * scale;
             var ny = y * scale;
@@ -196,8 +204,8 @@ namespace Collector.Dimension
 
             return GetBiomeBlock(moisture, elevation);
         }
-        
-        private Blocks GetBiomeBlock(double moisture, double elevation) {
+
+        public Blocks GetBiomeBlock(double moisture, double elevation) {
             var biome = GetBiome(moisture, elevation);
             if (biome.Equals("Tundra")) return Blocks.BlockSnow;
             if (biome.Equals("Taiga")) return Blocks.BlockSnow;

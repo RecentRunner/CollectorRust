@@ -20,10 +20,9 @@ namespace Collector.Character
         private readonly Main _main;
         private readonly World _world;
         private readonly Player _player;
-        private readonly PlayerMouse _playerMouse;
 
 
-        public InputController(OrthographicCamera cam, SpriteBatch spriteBatch, ContentManager contentManager, Main main, World world, Player player, PlayerMouse playerMouse)
+        public InputController(OrthographicCamera cam, SpriteBatch spriteBatch, ContentManager contentManager, Main main, World world, Player player)
         {
             Input = "Down";
             _cam = cam;
@@ -31,7 +30,6 @@ namespace Collector.Character
             _main = main;
             _world = world;
             _player = player;
-            _playerMouse = playerMouse;
             _frameNumber = 0;
             _texture = contentManager.Load<Texture2D>("man");
             const int tileSize = 32;

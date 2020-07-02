@@ -12,7 +12,7 @@ namespace Collector
         public const int TileSize = 1;
         public const float ViewportHeight = 9f;
         public const float ViewportWidth = 16f;
-        public const float MovementSpeed = 4/32f;
+        public const float MovementSpeed = 16/32f;
         public const int KeyDelay = 20;
         public const int ChunkSize = 8;
         public const int SuperChunkSize = 1;
