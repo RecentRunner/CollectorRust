@@ -5,7 +5,7 @@ use amethyst::{
     prelude::*,
     renderer::{Camera, ImageFormat, SpriteRender, SpriteSheet, SpriteSheetFormat, Texture},
     ui::{
-        Anchor, FontHandle, LineMode, Stretch, TtfFormat, UiButtonBuilder, UiImage, UiText,
+        Anchor, FontHandle, LineMode, TtfFormat, UiImage, UiText,
         UiTransform,
     },
     window::ScreenDimensions,
@@ -159,7 +159,7 @@ fn init_sprites(world: &mut World, sprites: &[SpriteRender], dimensions: &Screen
 /// This is the pure code only way to create UI with amethyst.
 pub fn create_ui_example(world: &mut World) {
     // this creates the simple gray background UI element.
-    let ui_background = world
+    let _ui_background = world
         .create_entity()
         .with(UiImage::SolidColor([0.6, 0.1, 0.2, 1.0]))
         .with(UiTransform::new(
